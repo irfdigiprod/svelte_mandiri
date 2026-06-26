@@ -241,28 +241,37 @@
 		</div>
 	{:else}
 		<!-- Layout untuk Halaman Non-Admin (Login, Register, Home) -->
-		<!-- Simple Modern Navbar -->
-		<nav class="bg-white border-b border-[#eef1f6] h-16 flex items-center justify-between px-6 sm:px-8">
-			<div class="flex items-center gap-3">
-				<div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center shadow-md shadow-amber-400/10">
-					<span class="font-extrabold text-xs text-white">SM</span>
+		<div class="flex flex-col min-h-screen bg-white">
+			<!-- Sticky Navbar with blur -->
+			<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#eef1f6] h-16 flex items-center justify-between px-6 sm:px-10">
+				<div class="flex items-center gap-3">
+					<div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center shadow-md shadow-amber-400/10">
+						<span class="font-extrabold text-xs text-white">SM</span>
+					</div>
+					<a href="/" class="text-lg font-bold tracking-tight text-slate-800 hover:opacity-90">
+						Svelte<span class="text-amber-500">Mandiri</span>
+					</a>
 				</div>
-				<a href="/" class="text-lg font-bold tracking-tight text-slate-800 hover:opacity-90">
-					Svelte<span class="text-amber-500">Mandiri</span>
-				</a>
-			</div>
-			<div class="flex items-center gap-4">
-				<a href="/login" class="text-sm font-semibold text-slate-500 hover:text-[#3f231c] transition-colors">
-					Login
-				</a>
-				<a href="/register" class="px-4 py-2 text-xs font-bold bg-[#3f231c] hover:bg-[#4a2e2b] text-white rounded-xl transition-all shadow-sm">
-					Register
-				</a>
-			</div>
-		</nav>
-		
-		<main class="flex-grow flex items-center justify-center p-6">
-			{@render children()}
-		</main>
+				<div class="flex items-center gap-3">
+					<a href="/login" class="text-sm font-semibold text-slate-500 hover:text-[#3f231c] transition-colors px-3 py-1.5">
+						Masuk
+					</a>
+					<a href="/register" class="px-4 py-2 text-xs font-bold bg-[#3f231c] hover:bg-[#4a2e2b] text-white rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-px">
+						Daftar Gratis
+					</a>
+				</div>
+			</nav>
+			
+			<!-- Content: Full-width for landing page, centered for login/register -->
+			{#if page.url.pathname === '/'}
+				<main class="flex-grow">
+					{@render children()}
+				</main>
+			{:else}
+				<main class="flex-grow flex items-center justify-center p-6">
+					{@render children()}
+				</main>
+			{/if}
+		</div>
 	{/if}
 </div>
