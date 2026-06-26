@@ -26,51 +26,49 @@
 	{#if isAdmin}
 		<!-- Layout untuk Halaman Admin -->
 		<div class="flex flex-col md:flex-row min-h-screen">
-			<!-- Left Navigation Panel (Sidebar) -->
-			<aside class="w-full md:w-64 flex-shrink-0 bg-white border-b md:border-b-0 md:border-r border-[#eef1f6] flex flex-col md:sticky md:top-0 md:h-screen">
-				<!-- Outer/Inner Sidebar Combined -->
-				<div class="flex flex-col h-full">
-					<!-- Top Branding -->
-					<div class="h-16 px-6 border-b border-[#eef1f6] flex items-center gap-3">
-						<div class="h-8 w-8 rounded-xl bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center shadow-md shadow-amber-400/10">
-							<span class="font-extrabold text-xs text-white">SM</span>
-						</div>
-						<span class="text-base font-extrabold tracking-tight text-slate-950">
-							SVELTE<span class="text-amber-500">MANDIRI</span>
-						</span>
+			<!-- Left Navigation Panel (Double Sidebar) -->
+			<aside class="w-full md:w-[312px] flex-shrink-0 bg-white border-b md:border-b-0 md:border-r border-[#eef1f6] flex flex-col md:flex-row md:sticky md:top-0 md:h-screen overflow-hidden">
+				<!-- Column 1: Narrow Left Column (Induk Menu Icons) - Hidden on mobile, visible on desktop -->
+				<div class="hidden md:flex w-[72px] bg-[#f8fafc] border-r border-[#eef1f6] flex-col justify-between py-6 items-center h-full flex-shrink-0">
+					<div class="flex flex-col items-center gap-5 w-full">
+						<!-- Apps Icon (Selected) -->
+						<button aria-label="Apps Category" class="h-11 w-11 rounded-2xl bg-[#3f231c] text-white flex items-center justify-center shadow-lg shadow-[#3f231c]/10">
+							<iconify-icon icon="solar:widget-3-outline" class="text-xl"></iconify-icon>
+						</button>
+						
+						<!-- Chart Icon -->
+						<button aria-label="Charts Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+							<iconify-icon icon="solar:graph-up-outline" class="text-xl"></iconify-icon>
+						</button>
+						
+						<!-- Settings Icon -->
+						<button aria-label="Settings Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+							<iconify-icon icon="solar:settings-outline" class="text-xl"></iconify-icon>
+						</button>
+						
+						<!-- Shield Icon -->
+						<button aria-label="Security Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+							<iconify-icon icon="solar:shield-check-outline" class="text-xl"></iconify-icon>
+						</button>
 					</div>
 
-					<!-- Search input (Dummy matching the reference image) -->
-					<div class="p-4 hidden md:block">
-						<div class="relative">
-							<input
-								type="text"
-								placeholder="Cari menu..."
-								disabled
-								class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-[#eef1f6] rounded-xl text-slate-400 placeholder-slate-400 focus:outline-none cursor-not-allowed"
-							/>
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 absolute left-3 top-2.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-							</svg>
-						</div>
+					<div class="flex flex-col items-center gap-5">
+						<!-- Info Icon -->
+						<button aria-label="App Info" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+							<iconify-icon icon="solar:info-circle-outline" class="text-xl"></iconify-icon>
+						</button>
+					</div>
+				</div>
+
+				<!-- Column 2: Wide Right Column (Sidebar Navigation and Search) -->
+				<div class="flex-grow flex flex-col h-full bg-white overflow-hidden">
+					<div class="h-16 px-6 border-b border-[#eef1f6] flex items-center flex-shrink-0">
+						<span class="text-sm font-bold text-slate-800 uppercase tracking-wider">Apps</span>
 					</div>
 
-					<!-- Sidebar Navigation Links -->
-					<div class="flex-grow p-4 md:pt-0 overflow-y-auto">
+					<!-- Scrollable Menu -->
+					<div class="flex-grow overflow-hidden flex flex-col w-full">
 						<SidebarMenu />
-					</div>
-
-					<!-- Profile Card Widget (At the bottom, matching reference image) -->
-					<div class="p-4 border-t border-[#eef1f6] mt-auto hidden md:block">
-						<div class="flex items-center gap-3">
-							<div class="h-10 w-10 rounded-full bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center text-white font-bold text-sm shadow-sm">
-								{user?.name ? user.name[0].toUpperCase() : 'A'}
-							</div>
-							<div class="flex-grow overflow-hidden">
-								<h4 class="text-xs font-bold text-slate-900 truncate">{user?.name || 'Irfan Alkhotiri'}</h4>
-								<p class="text-[10px] text-slate-400 truncate">{user?.email || 'irf.digiprod@gmail.com'}</p>
-							</div>
-						</div>
 					</div>
 				</div>
 			</aside>
