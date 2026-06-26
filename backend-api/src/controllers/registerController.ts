@@ -93,6 +93,8 @@ export const register = async (c: Context) => {
       201,
     );
   } catch (err) {
+    // log error to console
+    console.error("Register Error:", err);
     // return internal server error
     return c.json({ success: false, message: "Internal server error" }, 500);
   }

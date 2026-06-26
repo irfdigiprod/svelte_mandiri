@@ -1,1 +1,13 @@
-{"version":"7","dialect":"mysql","entries":[]}
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1782454060913,
+      "tag": "0000_lively_maria_hill",
+      "breakpoints": true
+    }
+  ]
+}

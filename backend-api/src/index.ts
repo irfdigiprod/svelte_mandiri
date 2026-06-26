@@ -1,12 +1,27 @@
 import { Hono } from "hono";
+import { migrate } from "drizzle-orm/mysql2/migrator";
+import { db } from "./db";
 
-//import routes
-import { Routes } from "./routes";
+// Fungsi untuk menjalankan migrasi otomatis
+async function runMigrations() {
+  try {
+    console.log("Running migrations...");
+    // Menjalankan migrasi dari folder './drizzle'
+    await migrate(db, { migrationsFolder: "./drizzle" });
+    console.log("Migrations completed successfully!");
+  } catch (error) {
+    console.error("Migration failed:", error);
+  }
+}
 
-// instansiasi Hono
+// Jalankan migrasi saat startup
+runMigrations();
+
+// Instansiasi Hono
 const app = new Hono().basePath("/api");
 
-// Use the imported routes
+// Gunakan routes
+import { Routes } from "./routes";
 app.route("/", Routes);
 
 export default app;
