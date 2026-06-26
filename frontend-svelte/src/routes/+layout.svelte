@@ -14,6 +14,9 @@
 
 	// State dropdown profil
 	let dropdownOpen = $state(false);
+	
+	// State drawer sidebar
+	let sidebarOpen = $state(false);
 
 	function toggleDropdown(e: Event) {
 		e.stopPropagation();
@@ -23,6 +26,12 @@
 	function closeDropdown() {
 		dropdownOpen = false;
 	}
+
+	// Otomatis tutup sidebar ketika pindah halaman
+	$effect(() => {
+		const _ = page.url.pathname;
+		sidebarOpen = false;
+	});
 </script>
 
 <svelte:window onclick={closeDropdown} />
@@ -40,11 +49,31 @@
 	{#if isAdmin}
 		<!-- Layout untuk Halaman Admin -->
 		<div class="flex flex-col md:flex-row min-h-screen">
-			<!-- Left Navigation Panel (Double Sidebar) -->
-			<aside class="w-full md:w-[312px] flex-shrink-0 bg-white border-b md:border-b-0 md:border-r border-[#eef1f6] flex flex-col md:flex-row md:sticky md:top-0 md:h-screen overflow-hidden">
-				<!-- Column 1: Narrow Left Column (Induk Menu Icons) - Hidden on mobile, visible on desktop -->
-				<div class="hidden md:flex w-[72px] bg-[#f8fafc] border-r border-[#eef1f6] flex-col justify-between py-6 items-center h-full flex-shrink-0">
+			<!-- Mobile Sidebar Overlay Backdrop -->
+			{#if sidebarOpen}
+				<div 
+					role="button"
+					tabindex="0"
+					class="md:hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 transition-opacity duration-300"
+					onclick={() => sidebarOpen = false}
+					onkeydown={(e) => e.key === 'Escape' && (sidebarOpen = false)}
+				></div>
+			{/if}
+
+			<!-- Left Navigation Panel (Double Sidebar) - Slide-out drawer on Mobile -->
+			<aside class="fixed inset-y-0 left-0 w-[312px] md:sticky md:top-0 md:h-screen bg-white border-r border-[#eef1f6] flex flex-row overflow-hidden z-50 transition-transform duration-300 transform {sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0">
+				<!-- Column 1: Narrow Left Column (Induk Menu Icons) -->
+				<div class="flex w-[72px] bg-[#f8fafc] border-r border-[#eef1f6] flex-col justify-between py-6 items-center h-full flex-shrink-0">
 					<div class="flex flex-col items-center gap-5 w-full">
+						<!-- Close Sidebar Button (Mobile Only) -->
+						<button 
+							aria-label="Close Sidebar" 
+							class="md:hidden h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all"
+							onclick={() => sidebarOpen = false}
+						>
+							<iconify-icon icon="solar:double-alt-arrow-left-outline" class="text-xl"></iconify-icon>
+						</button>
+
 						<!-- Apps Icon (Selected) -->
 						<button aria-label="Apps Category" class="h-11 w-11 rounded-2xl bg-[#3f231c] text-white flex items-center justify-center shadow-lg shadow-[#3f231c]/10">
 							<iconify-icon icon="solar:widget-3-outline" class="text-xl"></iconify-icon>
@@ -76,8 +105,12 @@
 
 				<!-- Column 2: Wide Right Column (Sidebar Navigation and Search) -->
 				<div class="flex-grow flex flex-col h-full bg-white overflow-hidden">
-					<div class="h-16 px-6 border-b border-[#eef1f6] flex items-center flex-shrink-0">
+					<div class="h-16 px-6 border-b border-[#eef1f6] flex items-center justify-between flex-shrink-0">
 						<span class="text-sm font-bold text-slate-800 uppercase tracking-wider">Apps</span>
+						<!-- Arrow Icon (as decoration matching screenshot) -->
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+						</svg>
 					</div>
 
 					<!-- Scrollable Menu -->
@@ -92,7 +125,17 @@
 				<!-- Top Bar Header -->
 				<header class="h-16 bg-white border-b border-[#eef1f6] flex items-center justify-between px-6 sm:px-8 sticky top-0 z-40">
 					<div class="flex items-center gap-3">
-						<h1 class="text-base font-bold tracking-tight text-slate-900">
+						<!-- Mobile Hamburger Menu Button -->
+						<button 
+							aria-label="Open Sidebar" 
+							class="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all"
+							onclick={() => sidebarOpen = true}
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+							</svg>
+						</button>
+						<h1 class="text-base font-bold tracking-tight text-slate-900 line-clamp-1">
 							Pondok Pesantren Minhajul Haq
 						</h1>
 					</div>
