@@ -73,10 +73,21 @@
 
 <!-- Hero Section -->
 <section class="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 overflow-hidden -mt-16">
-	<!-- Warm gradient background -->
-	<div class="absolute inset-0 bg-gradient-to-br from-[#fdf8f0] via-[#fff9f2] to-[#fef3e2] -z-10"></div>
-	<!-- Decorative blobs -->
-	<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-300/20 rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/3"></div>
+	<!-- Grid paper background -->
+	<div class="absolute inset-0 -z-10" style="
+		background-color: #fffdf7;
+		background-image:
+			linear-gradient(rgba(180,140,80,0.10) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(180,140,80,0.10) 1px, transparent 1px),
+			linear-gradient(rgba(180,140,80,0.04) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(180,140,80,0.04) 1px, transparent 1px);
+		background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px;
+		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+	"></div>
+	<!-- Fade edges so grid blends smoothly -->
+	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(255,249,240,0.0)_0%,rgba(255,253,247,0.7)_60%,rgba(255,253,247,1)_100%)]"></div>
+	<!-- Decorative blobs on top of grid -->
+	<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-300/15 rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/3"></div>
 	<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-200/30 rounded-full blur-[80px] -z-10 -translate-x-1/3 translate-y-1/3"></div>
 	<div class="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-amber-200/20 rounded-full blur-[60px] -z-10 -translate-x-1/2 -translate-y-1/2"></div>
 
