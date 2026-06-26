@@ -11,7 +11,21 @@
 
 	// Dapatkan data user dari page store data
 	let user = $derived(page.data.user);
+
+	// State dropdown profil
+	let dropdownOpen = $state(false);
+
+	function toggleDropdown(e: Event) {
+		e.stopPropagation();
+		dropdownOpen = !dropdownOpen;
+	}
+
+	function closeDropdown() {
+		dropdownOpen = false;
+	}
 </script>
+
+<svelte:window onclick={closeDropdown} />
 
 <svelte:head>
 	<title>Svelte Mandiri - Admin Panel</title>
@@ -92,14 +106,54 @@
 						</button>
 						
 						<!-- Profile Dropdown -->
-						<div class="flex items-center gap-2.5 pl-2 border-l border-slate-100">
-							<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center text-white font-bold text-sm shadow-sm">
-								{user?.name ? user.name[0].toUpperCase() : 'A'}
-							</div>
-							<span class="text-xs font-semibold text-slate-700 hidden sm:inline-block">{user?.name || 'Irfan Alkhotiri'}</span>
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 hidden sm:inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-							</svg>
+						<div class="relative">
+							<button 
+								onclick={toggleDropdown}
+								class="flex items-center gap-2.5 pl-2 border-l border-slate-100 focus:outline-none hover:opacity-85 transition-opacity"
+							>
+								<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+									{user?.name ? user.name[0].toUpperCase() : 'A'}
+								</div>
+								<span class="text-xs font-semibold text-slate-700 hidden sm:inline-block">{user?.name || 'Irfan Alkhotiri'}</span>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-400 hidden sm:inline-block transform transition-transform duration-200 {dropdownOpen ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+								</svg>
+							</button>
+
+							<!-- Dropdown Menu -->
+							{#if dropdownOpen}
+								<div class="absolute right-0 mt-2 w-48 bg-white border border-[#eef1f6] rounded-2xl shadow-xl py-2 z-50">
+									<div class="px-4 py-2 border-b border-slate-50">
+										<p class="text-xs font-bold text-slate-900 truncate">{user?.name || 'User'}</p>
+										<p class="text-[10px] text-slate-400 truncate">{user?.email || ''}</p>
+									</div>
+									<a 
+										href="#" 
+										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-[#3f231c] hover:bg-slate-50 transition-colors"
+										onclick={closeDropdown}
+									>
+										<iconify-icon icon="solar:user-outline" class="text-sm"></iconify-icon>
+										Profile
+									</a>
+									<a 
+										href="#" 
+										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-[#3f231c] hover:bg-slate-50 transition-colors"
+										onclick={closeDropdown}
+									>
+										<iconify-icon icon="solar:key-outline" class="text-sm"></iconify-icon>
+										Ganti Password
+									</a>
+									<div class="border-t border-slate-50 my-1"></div>
+									<a 
+										href="/logout" 
+										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors"
+										onclick={closeDropdown}
+									>
+										<iconify-icon icon="solar:logout-outline" class="text-sm"></iconify-icon>
+										Logout
+									</a>
+								</div>
+							{/if}
 						</div>
 					</div>
 				</header>

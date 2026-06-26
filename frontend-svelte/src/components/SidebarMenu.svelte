@@ -24,7 +24,7 @@
 	// Menu list matching the screenshot style (Chats, Tabungan, User Profile, Guru, Santri, Kedisiplinan, Akademik, Tahfidz, Klinik)
 	const menuItems: MenuItem[] = [
 		{ name: 'Chats', icon: 'solar:chat-round-line-outline', href: '#' },
-		{ name: 'Tabungan', icon: 'solar:wallet-2-outline', href: '#' },
+		{ name: 'Dashboard', icon: 'solar:wallet-2-outline', href: '/admin/dashboard' },
 		{ name: 'User Profile', icon: 'solar:user-circle-outline', href: '#' },
 		{
 			name: 'Guru',
@@ -35,11 +35,11 @@
 			]
 		},
 		{
-			name: 'Santri',
+			name: 'Users',
 			icon: 'solar:users-group-two-rounded-outline',
 			children: [
 				{ name: 'Data Users', href: '/admin/users' },
-				{ name: 'Absensi Santri', href: '#' },
+				{ name: 'Absensi Users', href: '#' },
 				{ name: 'Izin Pulang', href: '#' },
 				{ name: 'Kamar', href: '#' }
 			]
@@ -80,7 +80,7 @@
 
 	// Track menu mana saja yang terbuka (state accordions)
 	let openMenus = $state<Record<string, boolean>>({
-		'Santri': true // Default Santri terbuka seperti pada gambar
+		Santri: true // Default Santri terbuka seperti pada gambar
 	});
 
 	function toggleMenu(name: string) {
@@ -92,18 +92,17 @@
 		if (!searchQuery.trim()) {
 			return menuItems;
 		}
-		
+
 		const query = searchQuery.toLowerCase();
 		const results: MenuItem[] = [];
 
 		for (const item of menuItems) {
 			// Cek apakah parent menu cocok
 			const parentMatches = item.name.toLowerCase().includes(query);
-			
+
 			// Cek apakah ada children yang cocok
-			const filteredChildren = item.children?.filter(child => 
-				child.name.toLowerCase().includes(query)
-			) || [];
+			const filteredChildren =
+				item.children?.filter((child) => child.name.toLowerCase().includes(query)) || [];
 
 			if (parentMatches || filteredChildren.length > 0) {
 				// Jika pencarian cocok, otomatis buka accordion parent ini
@@ -127,7 +126,7 @@
 	// Cek apakah ada anak menu yang aktif
 	function isParentActive(item: MenuItem) {
 		if (item.children) {
-			return item.children.some(child => isPathActive(child.href));
+			return item.children.some((child) => isPathActive(child.href));
 		}
 		return item.href ? isPathActive(item.href) : false;
 	}
@@ -143,8 +142,19 @@
 				bind:value={searchQuery}
 				class="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-[#eef1f6] rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:bg-white transition-all"
 			/>
-			<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 absolute left-3 top-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-3.5 w-3.5 absolute left-3 top-3 text-slate-400"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+				/>
 			</svg>
 		</div>
 	</div>
@@ -157,14 +167,31 @@
 					<!-- Parent Menu Accordion -->
 					<button
 						onclick={() => toggleMenu(item.name)}
-						class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isParentActive(item) ? 'bg-[#f9c74f] text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
+						class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isParentActive(
+							item
+						)
+							? 'bg-[#f9c74f] text-slate-900 shadow-sm'
+							: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
 					>
 						<div class="flex items-center gap-3">
 							<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
 							<span>{item.name}</span>
 						</div>
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name] ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name]
+								? 'rotate-180'
+								: ''}"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"
+							/>
 						</svg>
 					</button>
 
@@ -174,7 +201,11 @@
 							{#each item.children as child}
 								<a
 									href={child.href}
-									class="block px-4 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 {isPathActive(child.href) ? 'bg-[#f9c74f] border border-blue-600 text-slate-950 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}"
+									class="block px-4 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 {isPathActive(
+										child.href
+									)
+										? 'bg-[#f9c74f] border border-blue-600 text-slate-950 shadow-sm font-bold'
+										: 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}"
 								>
 									{child.name}
 								</a>
@@ -185,7 +216,11 @@
 					<!-- Single Link Item -->
 					<a
 						href={item.href}
-						class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isPathActive(item.href || '') ? 'bg-[#f9c74f] text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
+						class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isPathActive(
+							item.href || ''
+						)
+							? 'bg-[#f9c74f] text-slate-900 shadow-sm'
+							: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
 					>
 						<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
 						<span>{item.name}</span>
@@ -196,9 +231,13 @@
 	</div>
 
 	<!-- User Profile Widget (At the bottom, matching reference image) -->
-	<div class="p-4 border-t border-[#eef1f6] bg-slate-50/50 mt-auto flex items-center justify-between gap-2">
+	<div
+		class="p-4 border-t border-[#eef1f6] bg-slate-50/50 mt-auto flex items-center justify-between gap-2"
+	>
 		<div class="flex items-center gap-3 overflow-hidden">
-			<div class="h-10 w-10 rounded-full bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
+			<div
+				class="h-10 w-10 rounded-full bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0"
+			>
 				{user?.name ? user.name[0].toUpperCase() : 'I'}
 			</div>
 			<div class="overflow-hidden">
