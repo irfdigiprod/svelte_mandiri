@@ -2,6 +2,7 @@
 	import SidebarMenu from '../../../../components/SidebarMenu.svelte';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { fade, fly } from 'svelte/transition';
 
 	let { form } = $props();
 
@@ -17,15 +18,15 @@
 	<title>Add User - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8" in:fade={{ duration: 300 }}>
 	<!-- Sidebar Menu -->
 	<div class="md:col-span-1">
 		<SidebarMenu />
 	</div>
 
 	<!-- Add User Main Content -->
-	<div class="md:col-span-3">
-		<div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-900 backdrop-blur-sm shadow-xl">
+	<div class="md:col-span-3" in:fly={{ y: 20, duration: 400, delay: 100 }}>
+		<div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-900/60 backdrop-blur-sm shadow-xl">
 			<!-- Header -->
 			<div class="border-b border-slate-900 pb-6 mb-6">
 				<h2 class="text-2xl font-extrabold text-white">Add User</h2>
