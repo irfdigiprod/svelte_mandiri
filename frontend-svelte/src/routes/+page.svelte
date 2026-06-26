@@ -167,7 +167,16 @@
 </section>
 
 <!-- Tech Stack Section -->
-<section class="py-24 px-6 bg-white">
+<section
+	class="py-24 px-6 relative overflow-hidden border-t border-slate-100"
+	style="
+		background-color: #ffffff;
+		background-image:
+			linear-gradient(rgba(100,116,139,0.08) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(100,116,139,0.08) 1px, transparent 1px);
+		background-size: 40px 40px;
+	"
+>
 	<div class="max-w-6xl mx-auto">
 		<!-- Section Header -->
 		<div class="text-center mb-16">
@@ -199,7 +208,16 @@
 </section>
 
 <!-- How it works -->
-<section class="py-24 px-6 bg-[#fdf8f0]">
+<section
+	class="py-24 px-6 relative overflow-hidden border-t border-slate-100"
+	style="
+		background-color: #fdf8f0;
+		background-image:
+			linear-gradient(rgba(100,116,139,0.08) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(100,116,139,0.08) 1px, transparent 1px);
+		background-size: 40px 40px;
+	"
+>
 	<div class="max-w-5xl mx-auto">
 		<div class="text-center mb-16">
 			<span class="inline-block px-3 py-1 bg-[#3f231c]/10 text-[#3f231c] text-xs font-bold rounded-full uppercase tracking-wider mb-4">Cara Memulai</span>
@@ -222,7 +240,16 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-24 px-6 bg-[#3f231c] relative overflow-hidden">
+<section
+	class="py-24 px-6 relative overflow-hidden"
+	style="
+		background-color: #3f231c;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+		background-size: 40px 40px;
+	"
+>
 	<!-- Decorative circles -->
 	<div class="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
 	<div class="absolute bottom-0 left-0 w-60 h-60 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3"></div>
@@ -256,7 +283,16 @@
 </section>
 
 <!-- Footer -->
-<footer class="py-10 px-6 bg-white border-t border-[#eef1f6]">
+<footer
+	class="py-10 px-6 relative overflow-hidden border-t border-[#eef1f6]"
+	style="
+		background-color: #ffffff;
+		background-image:
+			linear-gradient(rgba(100,116,139,0.06) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(100,116,139,0.06) 1px, transparent 1px);
+		background-size: 40px 40px;
+	"
+>
 	<div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
 		<div class="flex items-center gap-3">
 			<div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-amber-400 to-[#3f231c] flex items-center justify-center shadow-md">
