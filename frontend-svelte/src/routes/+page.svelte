@@ -73,21 +73,18 @@
 
 <!-- Hero Section -->
 <section class="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 overflow-hidden -mt-16">
-	<!-- Grid paper background -->
+	<!-- Grid paper background — white with subtle gray lines -->
 	<div class="absolute inset-0 -z-10" style="
-		background-color: #fffdf7;
+		background-color: #ffffff;
 		background-image:
-			linear-gradient(rgba(180,140,80,0.10) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(180,140,80,0.10) 1px, transparent 1px),
-			linear-gradient(rgba(180,140,80,0.04) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(180,140,80,0.04) 1px, transparent 1px);
-		background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px;
-		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+			linear-gradient(rgba(148,163,184,0.18) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(148,163,184,0.18) 1px, transparent 1px);
+		background-size: 40px 40px;
 	"></div>
-	<!-- Fade edges so grid blends smoothly -->
-	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(255,249,240,0.0)_0%,rgba(255,253,247,0.7)_60%,rgba(255,253,247,1)_100%)]"></div>
-	<!-- Decorative blobs on top of grid -->
-	<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-300/15 rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/3"></div>
+	<!-- Radial fade: center glows warm, edges keep grid visible -->
+	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(255,249,235,0.92)_0%,rgba(255,255,255,0.5)_60%,transparent_100%)]"></div>
+	<!-- Decorative warm blobs -->
+	<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-200/20 rounded-full blur-[120px] -z-10 translate-x-1/3 -translate-y-1/3"></div>
 	<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-200/30 rounded-full blur-[80px] -z-10 -translate-x-1/3 translate-y-1/3"></div>
 	<div class="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-amber-200/20 rounded-full blur-[60px] -z-10 -translate-x-1/2 -translate-y-1/2"></div>
 
