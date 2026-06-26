@@ -128,7 +128,7 @@
 										<p class="text-[10px] text-slate-400 truncate">{user?.email || ''}</p>
 									</div>
 									<a 
-										href="#" 
+										href="/admin/profile" 
 										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-[#3f231c] hover:bg-slate-50 transition-colors"
 										onclick={closeDropdown}
 									>
@@ -136,7 +136,7 @@
 										Profile
 									</a>
 									<a 
-										href="#" 
+										href="/admin/change-password" 
 										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-[#3f231c] hover:bg-slate-50 transition-colors"
 										onclick={closeDropdown}
 									>
