@@ -29,128 +29,18 @@
 
 	const appsMenuItems: MenuItem[] = [
 		{ name: 'Dashboard', icon: 'solar:wallet-2-outline', href: '/admin/dashboard' },
-		{ name: 'Chats', icon: 'solar:chat-round-line-outline', href: '/admin/chats' },
 		{ name: 'User Profile', icon: 'solar:user-circle-outline', href: '/admin/profile' },
-		{
-			name: 'Guru',
-			icon: 'solar:case-minimalistic-outline',
-			children: [
-				{ name: 'Data Guru', href: '#' },
-				{ name: 'Absensi Guru', href: '#' }
-			]
-		},
-		{
-			name: 'Santri',
-			icon: 'solar:book-bookmark-outline',
-			children: [
-				{ name: 'Data Santri', href: '/admin/santri' },
-				{ name: 'Absensi Santri', href: '/admin/santri/absensi' }
-			]
-		},
 		{
 			name: 'Users',
 			icon: 'solar:users-group-two-rounded-outline',
-			children: [
-				{ name: 'Data Users', href: '/admin/users' },
-				{ name: 'Absensi Users', href: '#' },
-				{ name: 'Izin Pulang', href: '#' },
-				{ name: 'Kamar', href: '#' }
-			]
-		},
-		{
-			name: 'Kedisiplinan',
-			icon: 'solar:shield-check-outline',
-			children: [
-				{ name: 'Pelanggaran', href: '#' },
-				{ name: 'Penghargaan', href: '#' }
-			]
-		},
-		{
-			name: 'Akademik',
-			icon: 'solar:notebook-outline',
-			children: [
-				{ name: 'Mata Pelajaran', href: '#' },
-				{ name: 'Jadwal Kelas', href: '#' }
-			]
-		},
-		{
-			name: 'Tahfidz',
-			icon: 'solar:book-open-outline',
-			children: [
-				{ name: 'Setoran Hafalan', href: '#' },
-				{ name: 'Target Tahfidz', href: '#' }
-			]
-		},
-		{
-			name: 'Klinik',
-			icon: 'solar:heart-pulse-outline',
-			children: [
-				{ name: 'Data Kesehatan', href: '#' },
-				{ name: 'Rekam Medis', href: '#' }
-			]
+			children: [{ name: 'Data Users', href: '/admin/users' }]
 		}
 	];
 
-	const chartsMenuItems: MenuItem[] = [
-		{
-			name: 'Kehadiran',
-			icon: 'solar:chart-outline',
-			children: [
-				{ name: 'Laporan Kehadiran', href: '/admin/reports/attendance' },
-				{ name: 'Rekap Bulanan', href: '/admin/reports/monthly' }
-			]
-		},
-		{
-			name: 'Santri',
-			icon: 'solar:users-group-rounded-outline',
-			children: [
-				{ name: 'Statistik Santri', href: '/admin/reports/santri' },
-				{ name: 'Grafik Perkembangan', href: '/admin/reports/progress' }
-			]
-		},
-		{
-			name: 'Keuangan',
-			icon: 'solar:wallet-money-outline',
-			children: [
-				{ name: 'Laporan Keuangan', href: '/admin/reports/finance' },
-				{ name: 'Rekapitulasi', href: '/admin/reports/finance-recap' }
-			]
-		},
-		{
-			name: 'Akademik',
-			icon: 'solar:diploma-outline',
-			children: [
-				{ name: 'Nilai Rata-rata', href: '/admin/reports/grades' },
-				{ name: 'Laporan Ujian', href: '/admin/reports/exams' }
-			]
-		}
-	];
-
+	
 	const settingsMenuItems: MenuItem[] = [
-		{
-			name: 'Umum',
-			icon: 'solar:tuning-2-outline',
-			children: [
-				{ name: 'Pengaturan Umum', href: '/admin/settings/general' },
-				{ name: 'Profil Institusi', href: '/admin/settings/institution' }
-			]
-		},
-		{
-			name: 'Pengguna & Akses',
-			icon: 'solar:user-id-outline',
-			children: [
-				{ name: 'Manajemen Role', href: '/admin/settings/roles' },
-				{ name: 'Hak Akses', href: '/admin/settings/permissions' }
-			]
-		},
-		{
-			name: 'Sistem',
-			icon: 'solar:server-outline',
-			children: [
-				{ name: 'Notifikasi', href: '/admin/settings/notifications' },
-				{ name: 'Backup Data', href: '/admin/settings/backup' }
-			]
-		}
+		{ name: 'Pengaturan Umum', icon: 'solar:tuning-2-outline', href: '/admin/settings/general' },
+		{ name: 'Hak Akses', icon: 'solar:user-id-outline', href: '/admin/settings/roles' },
 	];
 
 	const securityMenuItems: MenuItem[] = [
@@ -169,7 +59,6 @@
 
 	// Pilih menu berdasarkan kategori aktif
 	let menuItems = $derived.by((): MenuItem[] => {
-		if (category === 'charts') return chartsMenuItems;
 		if (category === 'settings') return settingsMenuItems;
 		if (category === 'security') return securityMenuItems;
 		return appsMenuItems;
@@ -203,9 +92,6 @@
 				item.children?.filter((child) => child.name.toLowerCase().includes(query)) || [];
 
 			if (parentMatches || filteredChildren.length > 0) {
-				if (item.children) {
-					openMenus[item.name] = true;
-				}
 				results.push({
 					...item,
 					children: item.children ? filteredChildren : undefined
@@ -227,7 +113,114 @@
 		}
 		return item.href ? isPathActive(item.href) : false;
 	}
+
+	// Pencarian lintas kategori
+	let searchResults = $derived.by(() => {
+		if (!searchQuery.trim()) {
+			return [];
+		}
+
+		const query = searchQuery.toLowerCase();
+		const categories = [
+			{ name: 'Apps', items: appsMenuItems },
+			{ name: 'Settings', items: settingsMenuItems },
+			{ name: 'Security', items: securityMenuItems }
+		];
+
+		const results: { categoryName: string; items: MenuItem[] }[] = [];
+
+		for (const cat of categories) {
+			const matchedItems: MenuItem[] = [];
+			for (const item of cat.items) {
+				const parentMatches = item.name.toLowerCase().includes(query);
+				const filteredChildren =
+					item.children?.filter((child) => child.name.toLowerCase().includes(query)) || [];
+
+				if (parentMatches || filteredChildren.length > 0) {
+					matchedItems.push({
+						...item,
+						children: item.children ? filteredChildren : undefined
+					});
+				}
+			}
+			if (matchedItems.length > 0) {
+				results.push({
+					categoryName: cat.name,
+					items: matchedItems
+				});
+			}
+		}
+		return results;
+	});
 </script>
+
+{#snippet renderItem(item: MenuItem)}
+	<div>
+		{#if item.children}
+			<!-- Parent Menu Accordion -->
+			<button
+				onclick={() => toggleMenu(item.name)}
+				class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isParentActive(
+					item
+				)
+					? 'bg-[#f9c74f] text-slate-900 shadow-sm'
+					: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
+			>
+				<div class="flex items-center gap-3">
+					<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
+					<span>{item.name}</span>
+				</div>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name] || searchQuery.trim()
+						? 'rotate-180'
+						: ''}"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M19 9l-7 7-7-7"
+					/>
+				</svg>
+			</button>
+
+			<!-- Children Submenu Items -->
+			{#if openMenus[item.name] || searchQuery.trim()}
+				<div class="mt-1 ml-4 pl-3 space-y-1">
+					{#each item.children as child}
+						<a
+							href={child.href}
+							class="block px-4 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 {isPathActive(
+								child.href
+							)
+								? 'bg-[#f9c74f] text-slate-950 shadow-sm font-bold'
+								: 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}"
+						>
+							{child.name}
+						</a>
+					{/each}
+				</div>
+			{/if}
+		{:else}
+			<!-- Single Link Item -->
+			<a
+				href={item.href}
+				class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isPathActive(
+					item.href || ''
+				)
+					? 'bg-[#f9c74f] text-slate-900 shadow-sm'
+					: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
+			>
+				<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
+				<span>{item.name}</span>
+			</a>
+		{/if}
+	</div>
+{/snippet}
 
 <div class="flex flex-col h-full w-full overflow-hidden">
 	<!-- Search input (Cari menu...) -->
@@ -258,73 +251,30 @@
 
 	<!-- Scrollable Menu Items -->
 	<div class="flex-grow overflow-y-auto px-3 py-2 space-y-1 scrollbar-thin">
-		{#each filteredMenuItems as item}
-			<div>
-				{#if item.children}
-					<!-- Parent Menu Accordion -->
-					<button
-						onclick={() => toggleMenu(item.name)}
-						class="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isParentActive(
-							item
-						)
-							? 'bg-[#f9c74f] text-slate-900 shadow-sm'
-							: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
-					>
-						<div class="flex items-center gap-3">
-							<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
-							<span>{item.name}</span>
+		{#if searchQuery.trim()}
+			{#if searchResults.length === 0}
+				<div class="text-center py-8 text-slate-400 text-xs">
+					Tidak ada menu yang cocok
+				</div>
+			{:else}
+				{#each searchResults as group}
+					<div class="mb-4">
+						<div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+							{group.categoryName}
 						</div>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name]
-								? 'rotate-180'
-								: ''}"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M19 9l-7 7-7-7"
-							/>
-						</svg>
-					</button>
-
-					<!-- Children Submenu Items -->
-					{#if openMenus[item.name]}
-						<div class="mt-1 ml-4 pl-3 space-y-1">
-							{#each item.children as child}
-								<a
-									href={child.href}
-									class="block px-4 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 {isPathActive(
-										child.href
-									)
-										? 'bg-[#f9c74f] text-slate-950 shadow-sm font-bold'
-										: 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}"
-								>
-									{child.name}
-								</a>
+						<div class="mt-1 space-y-1">
+							{#each group.items as item}
+								{@render renderItem(item)}
 							{/each}
 						</div>
-					{/if}
-				{:else}
-					<!-- Single Link Item -->
-					<a
-						href={item.href}
-						class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 {isPathActive(
-							item.href || ''
-						)
-							? 'bg-[#f9c74f] text-slate-900 shadow-sm'
-							: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}"
-					>
-						<iconify-icon icon={item.icon} class="text-lg"></iconify-icon>
-						<span>{item.name}</span>
-					</a>
-				{/if}
-			</div>
-		{/each}
+					</div>
+				{/each}
+			{/if}
+		{:else}
+			{#each filteredMenuItems as item}
+				{@render renderItem(item)}
+			{/each}
+		{/if}
 	</div>
 
 	<!-- User Profile Widget (At the bottom) -->

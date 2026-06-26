@@ -163,7 +163,7 @@
 
 <!-- Tech Stack Section -->
 <section
-	class="py-24 px-6 relative overflow-hidden border-t border-slate-100"
+	class="py-24 px-6 relative overflow-hidden"
 	style="
 		background-color: #ffffff;
 		background-image:
@@ -204,7 +204,7 @@
 
 <!-- How it works -->
 <section
-	class="py-24 px-6 relative overflow-hidden border-t border-slate-100"
+	class="py-24 px-6 relative overflow-hidden"
 	style="
 		background-color: #fdf8f0;
 		background-image:
@@ -279,7 +279,7 @@
 
 <!-- Footer -->
 <footer
-	class="py-10 px-6 relative overflow-hidden border-t border-[#eef1f6]"
+	class="py-10 px-6 relative overflow-hidden"
 	style="
 		background-color: #ffffff;
 		background-image:

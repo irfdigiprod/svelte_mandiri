@@ -19,14 +19,13 @@
 	let sidebarOpen = $state(false);
 
 	// State kategori sidebar aktif
-	type SidebarCategory = 'apps' | 'charts' | 'settings' | 'security';
+	type SidebarCategory = 'apps' | 'settings' | 'security';
 	let activeCategory = $state<SidebarCategory>('apps');
 
 	const categoryLabels: Record<SidebarCategory, string> = {
 		apps: 'Apps',
-		charts: 'Laporan',
 		settings: 'Settings',
-		security: 'Keamanan'
+		security: 'Security'
 	};
 
 	function setCategory(cat: SidebarCategory) {
@@ -38,15 +37,23 @@
 		dropdownOpen = !dropdownOpen;
 	}
 
+	// Otomatis sinkronisasi kategori aktif dan tutup sidebar ketika pindah halaman
+	$effect(() => {
+		const path = page.url.pathname;
+		sidebarOpen = false;
+		
+		if (path.startsWith('/admin/settings')) {
+			activeCategory = 'settings';
+		} else if (path.startsWith('/admin/security')) {
+			activeCategory = 'security';
+		} else if (path.startsWith('/admin')) {
+			activeCategory = 'apps';
+		}
+	});
+
 	function closeDropdown() {
 		dropdownOpen = false;
 	}
-
-	// Otomatis tutup sidebar ketika pindah halaman
-	$effect(() => {
-		const _ = page.url.pathname;
-		sidebarOpen = false;
-	});
 </script>
 
 <svelte:window onclick={closeDropdown} />
@@ -76,7 +83,7 @@
 			{/if}
 
 			<!-- Left Navigation Panel (Double Sidebar) - Slide-out drawer on Mobile -->
-			<aside class="fixed inset-y-0 left-0 w-[312px] md:sticky md:top-0 md:h-screen bg-white border-r border-[#eef1f6] flex flex-row overflow-hidden z-50 transition-transform duration-300 transform {sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0">
+			<aside class="fixed inset-y-0 left-0 w-[320px] md:w-[400px] md:sticky md:top-0 md:h-screen bg-white border-r border-[#eef1f6] flex flex-row overflow-hidden z-50 transition-transform duration-300 transform {sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0">
 				<!-- Column 1: Narrow Left Column (Induk Menu Icons) -->
 				<div class="flex w-[72px] bg-[#f8fafc] border-r border-[#eef1f6] flex-col justify-between py-6 items-center h-full flex-shrink-0">
 					<div class="flex flex-col items-center gap-5 w-full">
@@ -97,32 +104,13 @@
 							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'apps' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:widget-3-outline" class="text-xl"></iconify-icon>
 						</button>
-						
-						<!-- Chart Icon -->
-						<button 
-							aria-label="Charts Category" 
-							onclick={() => setCategory('charts')}
-							title="Laporan"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'charts' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
-							<iconify-icon icon="solar:graph-up-outline" class="text-xl"></iconify-icon>
-						</button>
-						
 						<!-- Settings Icon -->
 						<button 
 							aria-label="Settings Category" 
 							onclick={() => setCategory('settings')}
 							title="Settings"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'settings' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'settings' || activeCategory === 'security' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:settings-outline" class="text-xl"></iconify-icon>
-						</button>
-						
-						<!-- Shield Icon -->
-						<button 
-							aria-label="Security Category"
-							onclick={() => setCategory('security')}
-							title="Keamanan"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'security' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
-							<iconify-icon icon="solar:shield-check-outline" class="text-xl"></iconify-icon>
 						</button>
 					</div>
 
