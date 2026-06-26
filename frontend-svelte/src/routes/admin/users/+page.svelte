@@ -415,8 +415,6 @@
 
 		<!-- Pagination Footer (Tampilkan 5, 10, 50, All) -->
 		<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-100">
-			
-
 			<!-- Showing range info -->
 			{#if totalItems > 0}
 				<div class="text-xs text-slate-400 font-medium">
