@@ -49,6 +49,21 @@
 		{/if}
 
 		<form method="POST" action="?/changePassword" use:enhance class="space-y-5">
+			<!-- Current Password -->
+			<div>
+				<label for="currentPassword" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password Sekarang</label>
+				<input
+					type="password"
+					id="currentPassword"
+					name="currentPassword"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.currentPassword ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					placeholder="••••••••"
+				/>
+				{#if form?.errors?.currentPassword}
+					<p class="mt-1.5 text-xs text-red-500">{form.errors.currentPassword}</p>
+				{/if}
+			</div>
+
 			<!-- New Password -->
 			<div>
 				<label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password Baru</label>

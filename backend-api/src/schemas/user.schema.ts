@@ -59,4 +59,5 @@ export const updateUserSchema = z.object({
       .max(128, "Password maksimal 128 karakter")
       .optional(),
   ),
+  currentPassword: z.string().optional(),
 });

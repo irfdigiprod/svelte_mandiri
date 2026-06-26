@@ -13,10 +13,19 @@ export const actions = {
 
 			const userSession = JSON.parse(userCookie);
 			const formData = await request.formData();
+			const currentPassword = formData.get('currentPassword');
 			const password = formData.get('password');
 			const confirmPassword = formData.get('confirmPassword');
 
-			// Validasi konfirmasi password di server
+			// Validasi input di server
+			if (!currentPassword || currentPassword.toString().trim() === '') {
+				return fail(400, {
+					success: false,
+					message: 'Password sekarang wajib diisi',
+					errors: { currentPassword: 'Password sekarang wajib diisi' }
+				});
+			}
+
 			if (!password || password.toString().trim() === '') {
 				return fail(400, {
 					success: false,
@@ -33,7 +42,7 @@ export const actions = {
 				});
 			}
 
-			// Mengirim request PUT hanya dengan password baru
+			// Mengirim request PUT dengan password baru dan current password
 			const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${userSession.id}`, {
 				method: 'PUT',
 				headers: {
@@ -41,7 +50,8 @@ export const actions = {
 					Authorization: `${token}`
 				},
 				body: JSON.stringify({
-					password
+					password,
+					currentPassword
 				})
 			});
 

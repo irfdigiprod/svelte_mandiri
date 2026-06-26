@@ -213,9 +213,39 @@ export const updateUser = async (c: Context) => {
     }
 
     //ekstrak data yang sudah tervalidasi
-    const { name, username, email, password } = c.get(
+    const { name, username, email, password, currentPassword } = c.get(
       "validatedBody",
-    ) as UserUpdaterequest;
+    ) as UserUpdaterequest & { currentPassword?: string };
+
+    // Verifikasi current password jika mengubah password sendiri
+    const currentUserId = c.get("userId");
+    if (password && Number(userId) === Number(currentUserId)) {
+      if (!currentPassword) {
+        return c.json(
+          {
+            success: false,
+            message: "Password sekarang wajib diisi",
+            errors: { currentPassword: "Password sekarang wajib diisi" },
+          },
+          400,
+        );
+      }
+
+      const isCurrentPasswordValid = user.password
+        ? await Bun.password.verify(currentPassword, user.password)
+        : false;
+
+      if (!isCurrentPasswordValid) {
+        return c.json(
+          {
+            success: false,
+            message: "Password sekarang tidak valid",
+            errors: { currentPassword: "Password sekarang tidak valid" },
+          },
+          400,
+        );
+      }
+    }
 
     //Cek duplikat email / username kecuali user itu sendiri
     const conditions = [];
