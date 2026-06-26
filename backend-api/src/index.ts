@@ -20,8 +20,13 @@ runMigrations();
 // Instansiasi Hono
 const app = new Hono().basePath("/api");
 
+// import cors bawaan dari Hono
+import { cors } from "hono/cors";
+
 // Gunakan routes
 import { Routes } from "./routes";
+// aktifkan CORS middleware untuk semua endpoint
+app.use("*", cors());
 app.route("/", Routes);
 
 export default app;
