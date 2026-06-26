@@ -45,5 +45,29 @@ export const actions = {
 			console.error('Error deleting user:', error);
 			return { success: false, error: 'Failed to delete user' };
 		}
+	},
+	deleteSelected: async ({ request, cookies }) => {
+		const formData = await request.formData();
+		const idsStr = formData.get('ids');
+		if (!idsStr) return { success: false };
+
+		const ids = JSON.parse(idsStr.toString());
+		const token = cookies.get('token');
+
+		try {
+			for (const id of ids) {
+				await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`, {
+					method: 'DELETE',
+					headers: {
+						Authorization: `${token}`,
+						'Content-Type': 'application/json'
+					}
+				});
+			}
+			return { success: true };
+		} catch (error) {
+			console.error('Error deleting multiple users:', error);
+			return { success: false, error: 'Failed to delete selected users' };
+		}
 	}
 };

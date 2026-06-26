@@ -41,11 +41,11 @@
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </svelte:head>
 
 <!-- Global Font and Light Background -->
-<div class="min-h-screen bg-[#f4f6f8] font-['Outfit'] text-slate-800 flex flex-col selection:bg-amber-400 selection:text-slate-900 antialiased">
+<div class="min-h-screen bg-[#f4f6f8] font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex flex-col selection:bg-amber-400 selection:text-slate-900 antialiased">
 	{#if isAdmin}
 		<!-- Layout untuk Halaman Admin -->
 		<div class="flex flex-col md:flex-row min-h-screen">
