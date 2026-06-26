@@ -82,11 +82,6 @@
 		background-size: 40px 40px;
 	"
 >
-	<!-- Decorative blobs layered on top of grid -->
-	<div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-100/60 rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3"></div>
-	<div class="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-amber-50/80 rounded-full blur-[80px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
-	<div class="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-50/60 rounded-full blur-[80px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
-
 	<div class="max-w-4xl mx-auto text-center" in:fade={{ duration: 400 }}>
 		<!-- Badge -->
 		<div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-amber-200 rounded-full text-xs font-bold text-amber-700 shadow-sm shadow-amber-100 mb-8" in:fly={{ y: -10, duration: 400, delay: 100 }}>
