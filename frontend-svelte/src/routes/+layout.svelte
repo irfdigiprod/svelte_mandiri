@@ -146,6 +146,7 @@
 									<div class="border-t border-slate-50 my-1"></div>
 									<a 
 										href="/logout" 
+										data-sveltekit-reload
 										class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors"
 										onclick={closeDropdown}
 									>
