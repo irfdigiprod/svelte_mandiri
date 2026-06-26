@@ -18,6 +18,21 @@
 	// State drawer sidebar
 	let sidebarOpen = $state(false);
 
+	// State kategori sidebar aktif
+	type SidebarCategory = 'apps' | 'charts' | 'settings' | 'security';
+	let activeCategory = $state<SidebarCategory>('apps');
+
+	const categoryLabels: Record<SidebarCategory, string> = {
+		apps: 'Apps',
+		charts: 'Laporan',
+		settings: 'Settings',
+		security: 'Keamanan'
+	};
+
+	function setCategory(cat: SidebarCategory) {
+		activeCategory = cat;
+	}
+
 	function toggleDropdown(e: Event) {
 		e.stopPropagation();
 		dropdownOpen = !dropdownOpen;
@@ -74,30 +89,46 @@
 							<iconify-icon icon="solar:double-alt-arrow-left-outline" class="text-xl"></iconify-icon>
 						</button>
 
-						<!-- Apps Icon (Selected) -->
-						<button aria-label="Apps Category" class="h-11 w-11 rounded-2xl bg-[#3f231c] text-white flex items-center justify-center shadow-lg shadow-[#3f231c]/10">
+						<!-- Apps Icon -->
+						<button 
+							aria-label="Apps Category" 
+							onclick={() => setCategory('apps')}
+							title="Apps"
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'apps' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:widget-3-outline" class="text-xl"></iconify-icon>
 						</button>
 						
 						<!-- Chart Icon -->
-						<button aria-label="Charts Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+						<button 
+							aria-label="Charts Category" 
+							onclick={() => setCategory('charts')}
+							title="Laporan"
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'charts' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:graph-up-outline" class="text-xl"></iconify-icon>
 						</button>
 						
 						<!-- Settings Icon -->
-						<button aria-label="Settings Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+						<button 
+							aria-label="Settings Category" 
+							onclick={() => setCategory('settings')}
+							title="Settings"
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'settings' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:settings-outline" class="text-xl"></iconify-icon>
 						</button>
 						
 						<!-- Shield Icon -->
-						<button aria-label="Security Category" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+						<button 
+							aria-label="Security Category"
+							onclick={() => setCategory('security')}
+							title="Keamanan"
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'security' ? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}">
 							<iconify-icon icon="solar:shield-check-outline" class="text-xl"></iconify-icon>
 						</button>
 					</div>
 
 					<div class="flex flex-col items-center gap-5">
 						<!-- Info Icon -->
-						<button aria-label="App Info" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
+						<button aria-label="App Info" title="Info" class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all">
 							<iconify-icon icon="solar:info-circle-outline" class="text-xl"></iconify-icon>
 						</button>
 					</div>
@@ -106,7 +137,7 @@
 				<!-- Column 2: Wide Right Column (Sidebar Navigation and Search) -->
 				<div class="flex-grow flex flex-col h-full bg-white overflow-hidden">
 					<div class="h-16 px-6 border-b border-[#eef1f6] flex items-center justify-between flex-shrink-0">
-						<span class="text-sm font-bold text-slate-800 uppercase tracking-wider">Apps</span>
+						<span class="text-sm font-bold text-slate-800 uppercase tracking-wider">{categoryLabels[activeCategory]}</span>
 						<!-- Arrow Icon (as decoration matching screenshot) -->
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -115,7 +146,7 @@
 
 					<!-- Scrollable Menu -->
 					<div class="flex-grow overflow-hidden flex flex-col w-full">
-						<SidebarMenu />
+						<SidebarMenu category={activeCategory} />
 					</div>
 				</div>
 			</aside>

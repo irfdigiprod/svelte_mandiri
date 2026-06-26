@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+
+	// Terima prop category dari layout
+	let { category = 'apps' }: { category: string } = $props();
 
 	// Dapatkan data user dari page store data
 	let user = $derived(page.data.user);
@@ -21,17 +23,28 @@
 		children?: SubMenuItem[];
 	}
 
-	// Menu list matching the screenshot style (Chats, Tabungan, User Profile, Guru, Santri, Kedisiplinan, Akademik, Tahfidz, Klinik)
-	const menuItems: MenuItem[] = [
-		{ name: 'Chats', icon: 'solar:chat-round-line-outline', href: '#' },
+	// ===========================================================
+	// MENU SETS PER KATEGORI
+	// ===========================================================
+
+	const appsMenuItems: MenuItem[] = [
 		{ name: 'Dashboard', icon: 'solar:wallet-2-outline', href: '/admin/dashboard' },
-		{ name: 'User Profile', icon: 'solar:user-circle-outline', href: '#' },
+		{ name: 'Chats', icon: 'solar:chat-round-line-outline', href: '/admin/chats' },
+		{ name: 'User Profile', icon: 'solar:user-circle-outline', href: '/admin/profile' },
 		{
 			name: 'Guru',
 			icon: 'solar:case-minimalistic-outline',
 			children: [
 				{ name: 'Data Guru', href: '#' },
 				{ name: 'Absensi Guru', href: '#' }
+			]
+		},
+		{
+			name: 'Santri',
+			icon: 'solar:book-bookmark-outline',
+			children: [
+				{ name: 'Data Santri', href: '/admin/santri' },
+				{ name: 'Absensi Santri', href: '/admin/santri/absensi' }
 			]
 		},
 		{
@@ -78,9 +91,97 @@
 		}
 	];
 
+	const chartsMenuItems: MenuItem[] = [
+		{
+			name: 'Kehadiran',
+			icon: 'solar:chart-outline',
+			children: [
+				{ name: 'Laporan Kehadiran', href: '/admin/reports/attendance' },
+				{ name: 'Rekap Bulanan', href: '/admin/reports/monthly' }
+			]
+		},
+		{
+			name: 'Santri',
+			icon: 'solar:users-group-rounded-outline',
+			children: [
+				{ name: 'Statistik Santri', href: '/admin/reports/santri' },
+				{ name: 'Grafik Perkembangan', href: '/admin/reports/progress' }
+			]
+		},
+		{
+			name: 'Keuangan',
+			icon: 'solar:wallet-money-outline',
+			children: [
+				{ name: 'Laporan Keuangan', href: '/admin/reports/finance' },
+				{ name: 'Rekapitulasi', href: '/admin/reports/finance-recap' }
+			]
+		},
+		{
+			name: 'Akademik',
+			icon: 'solar:diploma-outline',
+			children: [
+				{ name: 'Nilai Rata-rata', href: '/admin/reports/grades' },
+				{ name: 'Laporan Ujian', href: '/admin/reports/exams' }
+			]
+		}
+	];
+
+	const settingsMenuItems: MenuItem[] = [
+		{
+			name: 'Umum',
+			icon: 'solar:tuning-2-outline',
+			children: [
+				{ name: 'Pengaturan Umum', href: '/admin/settings/general' },
+				{ name: 'Profil Institusi', href: '/admin/settings/institution' }
+			]
+		},
+		{
+			name: 'Pengguna & Akses',
+			icon: 'solar:user-id-outline',
+			children: [
+				{ name: 'Manajemen Role', href: '/admin/settings/roles' },
+				{ name: 'Hak Akses', href: '/admin/settings/permissions' }
+			]
+		},
+		{
+			name: 'Sistem',
+			icon: 'solar:server-outline',
+			children: [
+				{ name: 'Notifikasi', href: '/admin/settings/notifications' },
+				{ name: 'Backup Data', href: '/admin/settings/backup' }
+			]
+		}
+	];
+
+	const securityMenuItems: MenuItem[] = [
+		{ name: 'Log Aktivitas', icon: 'solar:history-outline', href: '/admin/security/logs' },
+		{ name: 'Manajemen Sesi', icon: 'solar:monitor-smartphone-outline', href: '/admin/security/sessions' },
+		{
+			name: 'Kebijakan',
+			icon: 'solar:lock-outline',
+			children: [
+				{ name: 'Kebijakan Password', href: '/admin/security/password-policy' },
+				{ name: 'Autentikasi 2FA', href: '/admin/security/2fa' }
+			]
+		},
+		{ name: 'Audit Trail', icon: 'solar:file-text-outline', href: '/admin/security/audit' }
+	];
+
+	// Pilih menu berdasarkan kategori aktif
+	let menuItems = $derived.by((): MenuItem[] => {
+		if (category === 'charts') return chartsMenuItems;
+		if (category === 'settings') return settingsMenuItems;
+		if (category === 'security') return securityMenuItems;
+		return appsMenuItems;
+	});
+
 	// Track menu mana saja yang terbuka (state accordions)
-	let openMenus = $state<Record<string, boolean>>({
-		Santri: true // Default Santri terbuka seperti pada gambar
+	let openMenus = $state<Record<string, boolean>>({});
+
+	// Reset openMenus saat kategori berubah
+	$effect(() => {
+		const _ = category;
+		openMenus = {};
 	});
 
 	function toggleMenu(name: string) {
@@ -97,15 +198,11 @@
 		const results: MenuItem[] = [];
 
 		for (const item of menuItems) {
-			// Cek apakah parent menu cocok
 			const parentMatches = item.name.toLowerCase().includes(query);
-
-			// Cek apakah ada children yang cocok
 			const filteredChildren =
 				item.children?.filter((child) => child.name.toLowerCase().includes(query)) || [];
 
 			if (parentMatches || filteredChildren.length > 0) {
-				// Jika pencarian cocok, otomatis buka accordion parent ini
 				if (item.children) {
 					openMenus[item.name] = true;
 				}
@@ -120,7 +217,7 @@
 
 	// Helper untuk mengecek apakah path aktif
 	function isPathActive(href: string) {
-		return page.url.pathname === href;
+		return href !== '#' && page.url.pathname === href;
 	}
 
 	// Cek apakah ada anak menu yang aktif
@@ -197,7 +294,7 @@
 
 					<!-- Children Submenu Items -->
 					{#if openMenus[item.name]}
-						<div class="mt-1 ml-4 pl-3 border-l border-slate-100 space-y-1">
+						<div class="mt-1 ml-4 pl-3 space-y-1">
 							{#each item.children as child}
 								<a
 									href={child.href}
@@ -230,7 +327,7 @@
 		{/each}
 	</div>
 
-	<!-- User Profile Widget (At the bottom, matching reference image) -->
+	<!-- User Profile Widget (At the bottom) -->
 	<div
 		class="p-4 border-t border-[#eef1f6] bg-slate-50/50 mt-auto flex items-center justify-between gap-2"
 	>
