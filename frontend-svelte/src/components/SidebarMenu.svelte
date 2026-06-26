@@ -204,7 +204,7 @@
 									class="block px-4 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 {isPathActive(
 										child.href
 									)
-										? 'bg-[#f9c74f] border border-blue-600 text-slate-950 shadow-sm font-bold'
+										? 'bg-[#f9c74f] text-slate-950 shadow-sm font-bold'
 										: 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}"
 								>
 									{child.name}
