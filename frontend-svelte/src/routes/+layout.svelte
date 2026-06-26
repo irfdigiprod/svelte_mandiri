@@ -59,8 +59,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </svelte:head>
 
-<!-- Global Font and Light Background -->
-<div class="min-h-screen bg-[#f4f6f8] font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex flex-col selection:bg-amber-400 selection:text-slate-900 antialiased">
+<!-- Global Font — background managed per section -->
+<div class="min-h-screen font-['Plus_Jakarta_Sans',sans-serif] text-slate-800 flex flex-col selection:bg-amber-400 selection:text-slate-900 antialiased {isAdmin ? 'bg-[#f4f6f8]' : ''}">
 	{#if isAdmin}
 		<!-- Layout untuk Halaman Admin -->
 		<div class="flex flex-col md:flex-row min-h-screen">
@@ -241,7 +241,7 @@
 		</div>
 	{:else}
 		<!-- Layout untuk Halaman Non-Admin (Login, Register, Home) -->
-		<div class="flex flex-col min-h-screen bg-white">
+		<div class="flex flex-col min-h-screen">
 			<!-- Sticky Navbar with blur -->
 			<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#eef1f6] h-16 flex items-center justify-between px-6 sm:px-10">
 				<div class="flex items-center gap-3">

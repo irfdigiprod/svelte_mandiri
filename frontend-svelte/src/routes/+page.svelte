@@ -72,19 +72,20 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 overflow-hidden -mt-16">
-	<!-- Grid paper background — white with clear gray grid lines -->
-	<div class="absolute inset-0 -z-10" style="
+<section
+	class="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 overflow-hidden -mt-16"
+	style="
 		background-color: #ffffff;
 		background-image:
-			linear-gradient(rgba(100,116,139,0.15) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(100,116,139,0.15) 1px, transparent 1px);
+			linear-gradient(rgba(100,116,139,0.12) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(100,116,139,0.12) 1px, transparent 1px);
 		background-size: 40px 40px;
-	"></div>
-	<!-- Very subtle warm tint overlay — does NOT cover grid -->
-	<div class="absolute inset-0 -z-10 bg-amber-50/30"></div>
-	<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-200/30 rounded-full blur-[80px] -z-10 -translate-x-1/3 translate-y-1/3"></div>
-	<div class="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-amber-200/20 rounded-full blur-[60px] -z-10 -translate-x-1/2 -translate-y-1/2"></div>
+	"
+>
+	<!-- Decorative blobs layered on top of grid -->
+	<div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-100/60 rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3"></div>
+	<div class="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-amber-50/80 rounded-full blur-[80px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
+	<div class="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-50/60 rounded-full blur-[80px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
 
 	<div class="max-w-4xl mx-auto text-center" in:fade={{ duration: 400 }}>
 		<!-- Badge -->
