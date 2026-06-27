@@ -881,6 +881,74 @@
 	size={importStep === 'review' ? 'lg' : 'md'}
 	onclose={() => {}}
 >
+	{#snippet footer()}
+		{#if importStep === 'review'}
+			<button
+				type="button"
+				onclick={() => {
+					importStep = 'upload';
+					parsedUsers = [];
+				}}
+				class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+			>
+				Kembali
+			</button>
+			<button
+				type="button"
+				onclick={startImport}
+				disabled={parsedUsers.filter(u => u.isValid).length === 0}
+				class="px-4 py-2 text-xs font-bold bg-[#3f231c] hover:bg-[#4a2e2b] text-white disabled:opacity-50 disabled:hover:bg-[#3f231c] rounded-xl transition-colors shadow-sm"
+			>
+				Proses Import ({parsedUsers.filter(u => u.isValid).length} User)
+			</button>
+		{/if}
+	{/snippet}
+
+	<!-- 3-Step Visual Stepper -->
+	<div class="flex items-center justify-between max-w-md mx-auto mb-8 border-b border-slate-100 pb-5">
+		<!-- Step 1: Unggah -->
+		<div class="flex items-center gap-2">
+			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'upload' ? 'bg-[#3f231c] text-white shadow-sm' : 'bg-green-100 text-green-700'}">
+				{#if importStep !== 'upload'}
+					<iconify-icon icon="solar:check-circle-bold" class="text-base"></iconify-icon>
+				{:else}
+					1
+				{/if}
+			</div>
+			<span class="text-xs font-bold transition-all duration-200 {importStep === 'upload' ? 'text-slate-800' : 'text-slate-400'}">Unggah</span>
+		</div>
+		
+		<!-- Line 1 -->
+		<div class="flex-grow h-[2px] mx-3 bg-slate-100">
+			<div class="h-full bg-[#3f231c] transition-all duration-300" style="width: {importStep !== 'upload' ? '100%' : '0%'}"></div>
+		</div>
+		
+		<!-- Step 2: Review -->
+		<div class="flex items-center gap-2">
+			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'review' ? 'bg-[#3f231c] text-white shadow-sm' : importStep === 'processing' || importStep === 'done' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+				{#if importStep === 'processing' || importStep === 'done'}
+					<iconify-icon icon="solar:check-circle-bold" class="text-base"></iconify-icon>
+				{:else}
+					2
+				{/if}
+			</div>
+			<span class="text-xs font-bold transition-all duration-200 {importStep === 'review' ? 'text-slate-800' : 'text-slate-400'}">Review</span>
+		</div>
+		
+		<!-- Line 2 -->
+		<div class="flex-grow h-[2px] mx-3 bg-slate-100">
+			<div class="h-full bg-[#3f231c] transition-all duration-300" style="width: {importStep === 'processing' || importStep === 'done' ? '100%' : '0%'}"></div>
+		</div>
+		
+		<!-- Step 3: Proses -->
+		<div class="flex items-center gap-2">
+			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'processing' || importStep === 'done' ? 'bg-[#3f231c] text-white shadow-sm' : 'bg-slate-100 text-slate-500'}">
+				3
+			</div>
+			<span class="text-xs font-bold transition-all duration-200 {importStep === 'processing' || importStep === 'done' ? 'text-slate-800' : 'text-slate-400'}">Proses</span>
+		</div>
+	</div>
+
 	{#if importStep === 'upload'}
 		<div class="space-y-6">
 			<div class="flex items-center justify-between p-4 bg-amber-50/50 border border-amber-100 rounded-2xl">
@@ -988,27 +1056,6 @@
 				</table>
 			</div>
 		</div>
-
-		{#snippet footer()}
-			<button
-				type="button"
-				onclick={() => {
-					importStep = 'upload';
-					parsedUsers = [];
-				}}
-				class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
-			>
-				Kembali
-			</button>
-			<button
-				type="button"
-				onclick={startImport}
-				disabled={parsedUsers.filter(u => u.isValid).length === 0}
-				class="px-4 py-2 text-xs font-bold bg-[#3f231c] hover:bg-[#4a2e2b] text-white disabled:opacity-50 disabled:hover:bg-[#3f231c] rounded-xl transition-colors shadow-sm"
-			>
-				Proses Import ({parsedUsers.filter(u => u.isValid).length} User)
-			</button>
-		{/snippet}
 	{:else if importStep === 'processing'}
 		<div class="py-8 flex flex-col items-center justify-center">
 			<!-- Green Circular Progress Indicator -->
