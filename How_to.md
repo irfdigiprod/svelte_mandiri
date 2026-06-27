@@ -36,6 +36,8 @@ Tutorial langkah demi langkah membangun aplikasi **Admin Panel** berbasis **Bun 
 5. [Menjalankan Aplikasi](#5-menjalankan-aplikasi)
 6. [Alur Data & Arsitektur](#6-alur-data--arsitektur)
 7. [Tips & Troubleshooting](#7-tips--troubleshooting)
+8. [Komponen DataTable (Reusable)](#8-komponen-datatable-reusable)
+9. [Komponen ImportExcelModal (Reusable)](#9-komponen-importexcelmodal-reusable)
 
 ---
 
