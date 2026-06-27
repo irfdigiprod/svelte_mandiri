@@ -1228,12 +1228,11 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 		{batchActions}
 	/>
 </div>
+```
 
 ---
 
 <a id="9-komponen-importexcelmodal-reusable"></a>
-
-```
 
 ## 9. Komponen ImportExcelModal (Reusable)
 
