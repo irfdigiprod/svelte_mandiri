@@ -5,10 +5,23 @@
 	import { untrack } from 'svelte';
 	import Modal from '../../../components/Modal.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	// View toggle state
 	let viewMode = $state<'table' | 'card'>('table');
+
+	// Success message visibility
+	let showSuccess = $state(false);
+
+	$effect(() => {
+		if (form?.success) {
+			showSuccess = true;
+			const timer = setTimeout(() => {
+				showSuccess = false;
+			}, 3000);
+			return () => clearTimeout(timer);
+		}
+	});
 
 	// Delete confirmation modal state
 	let showDeleteModal = $state(false);
@@ -197,6 +210,16 @@
 				</button>
 			</div>
 		</div>
+
+		<!-- Success Alert Banner -->
+		{#if showSuccess}
+			<div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-100 text-sm text-green-600 flex items-center gap-2" transition:fade>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+				</svg>
+				User berhasil dihapus!
+			</div>
+		{/if}
 
 		<!-- Collective Action Header Bar (Shows when items are selected) -->
 		{#if selectedIds.length > 0}
