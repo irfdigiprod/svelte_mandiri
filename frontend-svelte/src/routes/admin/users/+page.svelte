@@ -41,6 +41,7 @@
 	let importProgress = $state(0);
 	let importResults = $state({ successCount: 0, failCount: 0 });
 	let fileInput = $state<HTMLInputElement | null>(null);
+	let importViewMode = $state<'table' | 'card'>('table');
 
 	function openImportModal() {
 		importStep = 'upload';
@@ -1037,49 +1038,105 @@
 				</div>
 			</div>
 
-			<!-- Review Data Table -->
-			<div class="border border-slate-100 rounded-2xl overflow-hidden max-h-[300px] overflow-y-auto">
-				<table class="w-full text-left border-collapse text-xs">
-					<thead>
-						<tr class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
-							<th class="px-4 py-3">Status</th>
-							<th class="px-4 py-3">Nama</th>
-							<th class="px-4 py-3">Username (Email)</th>
-							<th class="px-4 py-3">Email</th>
-							<th class="px-4 py-3">Info / Error</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-slate-50">
-						{#each parsedUsers as user}
-							<tr class={user.isValid ? 'hover:bg-slate-50/50' : 'bg-red-50/20 hover:bg-red-50/40'}>
-								<td class="px-4 py-3 font-semibold">
-									{#if user.isValid}
-										<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200">
-											VALID
-										</span>
-									{:else}
-										<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200">
-											ERROR
-										</span>
-									{/if}
-								</td>
-								<td class="px-4 py-3 font-medium text-slate-700">{user.name || '-'}</td>
-								<td class="px-4 py-3 text-slate-500 font-mono">{user.username || '-'}</td>
-								<td class="px-4 py-3 text-slate-500 font-mono">{user.email || '-'}</td>
-								<td class="px-4 py-3">
-									{#if user.isValid}
-										<span class="text-slate-400 italic">Siap diimpor</span>
-									{:else}
-										<span class="text-red-500 font-medium block max-w-[200px] truncate" title={user.errors.join(', ')}>
-											{user.errors.join(', ')}
-										</span>
-									{/if}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+			<!-- Review Data Table / Card View Mode Toggle -->
+			<div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+				<span class="text-xs font-bold text-slate-500 pl-2">Tampilan Preview:</span>
+				<div class="flex items-center gap-1.5 p-0.5 bg-white border border-slate-200 rounded-lg">
+					<button
+						type="button"
+						onclick={() => (importViewMode = 'table')}
+						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode === 'table' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+						title="Tabel"
+					>
+						<iconify-icon icon="solar:hamburger-menu-outline" class="text-base"></iconify-icon>
+					</button>
+					<button
+						type="button"
+						onclick={() => (importViewMode = 'card')}
+						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode === 'card' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+						title="Card"
+					>
+						<iconify-icon icon="solar:widget-outline" class="text-base"></iconify-icon>
+					</button>
+				</div>
 			</div>
+
+			{#if importViewMode === 'table'}
+				<!-- Review Data Table (Horizontally scrollable) -->
+				<div class="border border-slate-100 rounded-2xl overflow-y-auto overflow-x-auto max-h-[300px]">
+					<table class="w-full text-left border-collapse text-xs min-w-[700px]">
+						<thead>
+							<tr class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+								<th class="px-4 py-3">Status</th>
+								<th class="px-4 py-3">Nama</th>
+								<th class="px-4 py-3">Username (Email)</th>
+								<th class="px-4 py-3">Email</th>
+								<th class="px-4 py-3">Info / Error</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-slate-50">
+							{#each parsedUsers as user}
+								<tr class={user.isValid ? 'hover:bg-slate-50/50' : 'bg-red-50/20 hover:bg-red-50/40'}>
+									<td class="px-4 py-3 font-semibold">
+										{#if user.isValid}
+											<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200">
+												VALID
+											</span>
+										{:else}
+											<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200">
+												ERROR
+											</span>
+										{/if}
+									</td>
+									<td class="px-4 py-3 font-medium text-slate-700">{user.name || '-'}</td>
+									<td class="px-4 py-3 text-slate-500 font-mono">{user.username || '-'}</td>
+									<td class="px-4 py-3 text-slate-500 font-mono">{user.email || '-'}</td>
+									<td class="px-4 py-3">
+										{#if user.isValid}
+											<span class="text-slate-400 italic">Siap diimpor</span>
+										{:else}
+											<span class="text-red-500 font-medium block" title={user.errors.join(', ')}>
+												{user.errors.join(', ')}
+											</span>
+										{/if}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{:else}
+				<!-- Review Data Card Grid -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-1">
+					{#each parsedUsers as user}
+						<div class="p-4 border rounded-2xl flex flex-col justify-between {user.isValid ? 'border-slate-200 bg-slate-50/10' : 'border-red-200 bg-red-50/10'}">
+							<div class="flex items-center justify-between mb-3">
+								<span class="font-bold text-slate-800 text-xs">{user.name || '-'}</span>
+								{#if user.isValid}
+									<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200">VALID</span>
+								{:else}
+									<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200">ERROR</span>
+								{/if}
+							</div>
+							<div class="space-y-1.5 text-[11px] text-slate-500 mb-3">
+								<div class="flex justify-between">
+									<span class="text-slate-400">Username:</span>
+									<span class="font-mono text-slate-700">@{user.username || '-'}</span>
+								</div>
+								<div class="flex justify-between">
+									<span class="text-slate-400">Email:</span>
+									<span class="font-mono text-slate-700">{user.email || '-'}</span>
+								</div>
+							</div>
+							{#if !user.isValid}
+								<div class="p-2.5 bg-red-50 border border-red-100 text-red-600 text-[10px] rounded-xl font-semibold leading-relaxed">
+									{user.errors.join(', ')}
+								</div>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{:else if importStep === 'processing'}
 		<div class="py-8 flex flex-col items-center justify-center">
