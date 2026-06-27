@@ -1118,7 +1118,7 @@ Komponen ini memanfaatkan **Snippets** untuk memberikan kendali kustomisasi mark
 
 Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggunakan `DataTable.svelte`:
 
-````html
+```html
 <script lang="ts">
 	import DataTable from '../../../components/DataTable.svelte';
 	import { invalidateAll } from '$app/navigation';
