@@ -25,6 +25,7 @@
 
 	// Delete confirmation modal state
 	let showDeleteModal = $state(false);
+	let showBulkDeleteModal = $state(false);
 	let userToDelete = $state<any>(null);
 
 	function confirmDelete(user: any) {
@@ -238,15 +239,13 @@
 						Batalkan Pilihan
 					</button>
 				</div>
-				<form method="POST" action="?/deleteSelected" use:enhance class="inline">
-					<input type="hidden" name="ids" value={JSON.stringify(selectedIds)} />
-					<button
-						type="submit"
-						class="px-4 py-2.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all shadow-sm"
-					>
-						Hapus Terpilih
-					</button>
-				</form>
+				<button
+					type="button"
+					onclick={() => (showBulkDeleteModal = true)}
+					class="px-4 py-2.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all shadow-sm"
+				>
+					Hapus Terpilih
+				</button>
 			</div>
 		{/if}
 
@@ -644,6 +643,53 @@
 				class="px-4 py-2 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors shadow-sm"
 			>
 				Ya, Hapus
+			</button>
+		</form>
+	{/snippet}
+</Modal>
+
+<Modal
+	bind:show={showBulkDeleteModal}
+	title="Konfirmasi Hapus Beberapa User"
+	size="sm"
+	onclose={() => {}}
+>
+	<div class="space-y-4">
+		<p class="text-slate-600">
+			Apakah Anda yakin ingin menghapus <strong class="text-slate-900">{selectedIds.length}</strong> user yang terpilih?
+		</p>
+		<p class="text-xs text-red-500 font-medium">
+			Tindakan ini tidak dapat dibatalkan. Semua data terkait user terpilih ini akan dihapus secara permanen.
+		</p>
+	</div>
+
+	{#snippet footer()}
+		<button
+			type="button"
+			onclick={() => {
+				showBulkDeleteModal = false;
+			}}
+			class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+		>
+			Batal
+		</button>
+		<form
+			method="POST"
+			action="?/deleteSelected"
+			use:enhance={() => {
+				return async ({ update }) => {
+					showBulkDeleteModal = false;
+					selectedIds = [];
+					await update();
+				};
+			}}
+		>
+			<input type="hidden" name="ids" value={JSON.stringify(selectedIds)} />
+			<button
+				type="submit"
+				class="px-4 py-2 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors shadow-sm"
+			>
+				Ya, Hapus Semua
 			</button>
 		</form>
 	{/snippet}
