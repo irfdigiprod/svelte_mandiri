@@ -61,6 +61,42 @@
 		return Math.ceil(items.length / size) || 1;
 	});
 
+	function getVisiblePages(current: number, total: number): (number | '...')[] {
+		if (total <= 7) {
+			return Array.from({ length: total }, (_, i) => i + 1);
+		}
+
+		const pages: (number | '...')[] = [];
+		pages.push(1);
+
+		let start = Math.max(2, current - 1);
+		let end = Math.min(total - 1, current + 1);
+
+		if (current <= 4) {
+			end = 5;
+		}
+		if (current >= total - 3) {
+			start = total - 4;
+		}
+
+		if (start > 2) {
+			pages.push('...');
+		}
+
+		for (let i = start; i <= end; i++) {
+			pages.push(i);
+		}
+
+		if (end < total - 1) {
+			pages.push('...');
+		}
+
+		pages.push(total);
+		return pages;
+	}
+
+	let visiblePages = $derived(getVisiblePages(currentPage, totalPages));
+
 	// Select All logic
 	let isAllSelected = $derived(
 		items.length > 0 && items.every((u: any) => selectedIds.includes(u.id))
@@ -294,16 +330,21 @@
 					>
 						Prev
 					</button>
-					{#each Array(totalPages) as _, i}
-						<button
-							onclick={() => (currentPage = i + 1)}
-							class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage ===
-							i + 1
-								? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10'
-								: 'text-slate-500 hover:bg-slate-50'}"
-						>
-							{i + 1}
-						</button>
+					{#each visiblePages as pageNum}
+						{#if pageNum === '...'}
+							<span class="h-8 w-8 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
+								...
+							</span>
+						{:else}
+							<button
+								onclick={() => (currentPage = pageNum as number)}
+								class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage === pageNum
+									? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10'
+									: 'text-slate-500 hover:bg-slate-50'}"
+							>
+								{pageNum}
+							</button>
+						{/if}
 					{/each}
 					<button
 						onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}

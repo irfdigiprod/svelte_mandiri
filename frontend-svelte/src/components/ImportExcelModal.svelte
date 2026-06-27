@@ -51,6 +51,42 @@
 		return Math.ceil(filteredImportUsers.length / size) || 1;
 	});
 
+	function getVisiblePages(current: number, total: number): (number | '...')[] {
+		if (total <= 7) {
+			return Array.from({ length: total }, (_, i) => i + 1);
+		}
+
+		const pages: (number | '...')[] = [];
+		pages.push(1);
+
+		let start = Math.max(2, current - 1);
+		let end = Math.min(total - 1, current + 1);
+
+		if (current <= 4) {
+			end = 5;
+		}
+		if (current >= total - 3) {
+			start = total - 4;
+		}
+
+		if (start > 2) {
+			pages.push('...');
+		}
+
+		for (let i = start; i <= end; i++) {
+			pages.push(i);
+		}
+
+		if (end < total - 1) {
+			pages.push('...');
+		}
+
+		pages.push(total);
+		return pages;
+	}
+
+	let visibleImportPages = $derived(getVisiblePages(importCurrentPage, totalImportPages));
+
 	$effect(() => {
 		const q = importSearchQuery;
 		const s = importPageSize;
@@ -637,17 +673,22 @@
 						>
 							Prev
 						</button>
-						{#each Array(totalImportPages) as _, i}
-							<button
-								type="button"
-								onclick={() => (importCurrentPage = i + 1)}
-								class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage ===
-								i + 1
-									? 'bg-[#3f231c] text-white shadow-sm'
-									: 'text-slate-500 hover:bg-slate-50'}"
-							>
-								{i + 1}
-							</button>
+						{#each visibleImportPages as pageNum}
+							{#if pageNum === '...'}
+								<span class="h-7 w-7 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
+									...
+								</span>
+							{:else}
+								<button
+									type="button"
+									onclick={() => (importCurrentPage = pageNum as number)}
+									class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage === pageNum
+										? 'bg-[#3f231c] text-white shadow-sm'
+										: 'text-slate-500 hover:bg-slate-50'}"
+								>
+									{pageNum}
+								</button>
+							{/if}
 						{/each}
 						<button
 							type="button"
