@@ -93,7 +93,6 @@
 
 <!-- Hero Section -->
 <section
-	use:reveal={{ stagger: 100 }}
 	class="relative min-h-screen flex flex-col items-center justify-center px-6 py-24 overflow-hidden -mt-16"
 	style="
 		background-color: #ffffff;
@@ -103,74 +102,73 @@
 		background-size: 40px 40px;
 	"
 >
-	<div class="max-w-4xl mx-auto text-center" in:fade={{ duration: 400 }}>
-		<!-- Badge -->
-		<div
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-amber-200 rounded-full text-xs font-bold text-amber-700 shadow-sm shadow-amber-100 mb-8"
-			in:fly={{ y: -10, duration: 400, delay: 100 }}
-		>
-			<span class="flex h-2 w-2 relative">
-				<span
-					class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"
-				></span>
-				<span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-			</span>
-			Fullstack Modern Stack — SvelteKit + Hono + MySQL
+	<div class="max-w-4xl mx-auto text-center">
+		<!-- Badge (Animate from top/down) -->
+		<div use:reveal={{ animation: 'fade-down', duration: 600, delay: 100 }}>
+			<div
+				class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-amber-200 rounded-full text-xs font-bold text-amber-700 shadow-sm shadow-amber-100 mb-8"
+			>
+				<span class="flex h-2 w-2 relative">
+					<span
+						class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"
+					></span>
+					<span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+				</span>
+				<span>Fullstack Modern Stack — SvelteKit + Hono + MySQL</span>
+			</div>
 		</div>
 
-		<!-- Headline -->
-		<h1
-			class="text-5xl sm:text-7xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6"
-			in:fly={{ y: 20, duration: 500, delay: 150 }}
-		>
-			Admin Panel
-			<span class="relative">
-				<span
-					class="bg-gradient-to-r from-amber-500 via-orange-500 to-[#3f231c] bg-clip-text text-transparent"
-					>Modern</span
-				>
-				<svg
-					class="absolute -bottom-2 left-0 w-full"
-					viewBox="0 0 200 8"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M0 6 Q100 0 200 6"
-						stroke="#f59e0b"
-						stroke-width="2.5"
-						stroke-linecap="round"
+		<!-- Text Group (Headline & Subtitle staggered from left) -->
+		<div use:reveal={{ animation: 'fade-left', duration: 700, delay: 200, stagger: 120 }}>
+			<!-- Headline -->
+			<h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6">
+				Admin Panel
+				<span class="relative">
+					<span
+						class="bg-gradient-to-r from-amber-500 via-orange-500 to-[#3f231c] bg-clip-text text-transparent"
+						>Modern</span
+					>
+					<svg
+						class="absolute -bottom-2 left-0 w-full"
+						viewBox="0 0 200 8"
 						fill="none"
-						opacity="0.6"
-					/>
-				</svg>
-			</span>
-			<br />untuk Pesantren
-		</h1>
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M0 6 Q100 0 200 6"
+							stroke="#f59e0b"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							fill="none"
+							opacity="0.6"
+						/>
+					</svg>
+				</span>
+				<br />untuk Pesantren
+			</h1>
 
-		<!-- Subtitle -->
-		<p
-			class="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto mb-12"
-			in:fly={{ y: 20, duration: 500, delay: 200 }}
-		>
-			Sistem manajemen berbasis web yang dibangun dari nol menggunakan
-			<strong class="text-slate-700">Bun · Hono · DrizzleORM · MySQL · SvelteKit 5</strong>.
-			Pelajari cara membangunnya di file
-			<a
-				href="https://github.com/irfdigiprod/svelte_mandiri/blob/main/How_to.md"
-				target="_blank"
-				rel="noopener"
-				class="text-amber-600 hover:text-amber-700 underline underline-offset-2 font-semibold"
-				>How_to.md</a
-			>.
-		</p>
+			<!-- Subtitle -->
+			<p class="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto mb-12">
+				Sistem manajemen berbasis web yang dibangun dari nol menggunakan
+				<strong class="text-slate-700">Bun · Hono · DrizzleORM · MySQL · SvelteKit 5</strong>.
+				Pelajari cara membangunnya di file
+				<a
+					href="https://github.com/irfdigiprod/svelte_mandiri/blob/main/How_to.md"
+					target="_blank"
+					rel="noopener"
+					class="text-amber-600 hover:text-amber-700 underline underline-offset-2 font-semibold"
+					>How_to.md</a
+				>.
+			</p>
+		</div>
 
-		<!-- CTA Buttons -->
+		<!-- CTA Buttons (Animate from opposite sides) -->
 		<div
+			use:reveal={{ duration: 700, delay: 450 }}
 			class="flex flex-col sm:flex-row items-center justify-center gap-4"
-			in:fly={{ y: 20, duration: 500, delay: 250 }}
 		>
 			<a
+				data-reveal-animation="fade-right"
 				href="/register"
 				class="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#3f231c] hover:bg-[#4a2e2b] text-white font-bold rounded-2xl shadow-xl shadow-[#3f231c]/25 hover:shadow-[#3f231c]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm"
 			>
@@ -205,6 +203,7 @@
 				</svg>
 			</a>
 			<a
+				data-reveal-animation="fade-left"
 				href="/login"
 				class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 font-bold rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm"
 			>
@@ -226,10 +225,10 @@
 			</a>
 		</div>
 
-		<!-- Social proof / stats -->
+		<!-- Social proof / stats (Staggered from bottom/up) -->
 		<div
+			use:reveal={{ animation: 'fade-up', duration: 700, delay: 550, stagger: 100 }}
 			class="flex flex-wrap items-center justify-center gap-8 mt-16"
-			in:fly={{ y: 20, duration: 500, delay: 300 }}
 		>
 			{#each [{ label: 'Teknologi', value: '6+' }, { label: 'Fitur Admin', value: '10+' }, { label: 'Halaman', value: '12+' }] as stat}
 				<div class="text-center">
@@ -277,9 +276,7 @@
 				class="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase tracking-wider mb-4"
 				>Tech Stack</span
 			>
-			<h2
-				class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4"
-			>
+			<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
 				Dibangun dengan Teknologi Terbaik
 			</h2>
 			<p class="text-slate-500 max-w-xl mx-auto">
@@ -289,7 +286,10 @@
 		</div>
 
 		<!-- Feature Cards Grid -->
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" use:reveal={{ animation: 'fade-up', stagger: 120 }}>
+		<div
+			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+			use:reveal={{ animation: 'fade-up', stagger: 120 }}
+		>
 			{#each features as feat, i}
 				<div
 					class="group p-6 bg-white border border-[#eef1f6] rounded-2xl hover:shadow-xl hover:shadow-slate-100 hover:-translate-y-1 transition-all duration-300"
@@ -366,6 +366,129 @@
 	</div>
 </section>
 
+<!-- Profile Section -->
+<section
+	class="py-24 px-6 relative overflow-hidden bg-white"
+	style="
+		background-image:
+			linear-gradient(rgba(100,116,139,0.05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(100,116,139,0.05) 1px, transparent 1px);
+		background-size: 40px 40px;
+	"
+>
+	<div class="max-w-5xl mx-auto">
+		<div class="text-center mb-16" use:reveal={{ animation: 'fade-down', duration: 700 }}>
+			<span
+				class="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase tracking-wider mb-4"
+				>Creator Profile</span
+			>
+			<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">Mengenal Creator Svelte Mandiri</h2>
+			<p class="text-slate-500 max-w-xl mx-auto">
+				Membangun ekosistem aplikasi modern berbasis fullstack JavaScript untuk efisiensi dan transparansi pesantren.
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+			<!-- Left: Portrait Photo Card -->
+			<div
+				class="md:col-span-5 flex justify-center"
+				use:reveal={{ animation: 'fade-right', duration: 800 }}
+			>
+				<div class="relative group max-w-sm w-full">
+					<!-- Glow effect background -->
+					<div class="absolute -inset-1 bg-gradient-to-tr from-amber-500 via-orange-500 to-red-500 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-500"></div>
+					
+					<div class="relative bg-white p-4 rounded-2xl border border-slate-100 shadow-xl">
+						<div class="overflow-hidden rounded-xl aspect-square mb-4 bg-slate-100">
+							<img
+								src="/irfan.jpg"
+								alt="Irfan Alkhotiri"
+								class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+							/>
+						</div>
+						<div class="text-center">
+							<h3 class="text-xl font-bold text-slate-900">Irfan Alkhotiri</h3>
+							<p class="text-sm font-medium text-slate-400">Fullstack Web Developer</p>
+							<div class="flex justify-center gap-2 mt-3">
+								<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">SvelteKit</span>
+								<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">Hono</span>
+								<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full">Bun</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right: Bio & Expertise -->
+			<div
+				class="md:col-span-7 space-y-6"
+				use:reveal={{ animation: 'fade-left', duration: 800, stagger: 100 }}
+			>
+				<div>
+					<h3 class="text-2xl font-bold text-slate-900 mb-3">Hi, Saya Irfan 👋</h3>
+					<p class="text-slate-600 leading-relaxed">
+						Saya adalah seorang fullstack developer yang berfokus membangun aplikasi web modern, cepat, dan mudah di-maintain. Proyek <strong class="text-slate-800">Svelte Mandiri</strong> ini saya rancang sebagai materi belajar mandiri untuk memperlihatkan bagaimana integrasi ekosistem JavaScript terbaru (Bun, Hono, DrizzleORM, MySQL, dan SvelteKit 5) dapat menghasilkan sistem manajemen admin panel pesantren yang tangguh dan elegan.
+					</p>
+				</div>
+
+				<div>
+					<h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3">Keahlian Utama</h4>
+					<div class="grid grid-cols-2 gap-3">
+						<div class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+							<span class="text-amber-500 text-lg">⚡</span>
+							<div>
+								<p class="text-xs font-bold text-slate-800">Backend API</p>
+								<p class="text-[10px] text-slate-400">Hono, Bun, TypeScript</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+							<span class="text-amber-500 text-lg">🎨</span>
+							<div>
+								<p class="text-xs font-bold text-slate-800">Frontend UI/UX</p>
+								<p class="text-[10px] text-slate-400">SvelteKit 5, TailwindCSS</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+							<span class="text-amber-500 text-lg">💾</span>
+							<div>
+								<p class="text-xs font-bold text-slate-800">Database & ORM</p>
+								<p class="text-[10px] text-slate-400">MySQL, DrizzleORM</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+							<span class="text-amber-500 text-lg">⚙️</span>
+							<div>
+								<p class="text-xs font-bold text-slate-800">DevOps & Runtime</p>
+								<p class="text-[10px] text-slate-400">Bun, Docker, Git</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="flex flex-wrap items-center gap-4 pt-2">
+					<a
+						href="https://github.com/irfdigiprod"
+						target="_blank"
+						rel="noopener"
+						class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-all duration-300 shadow-md"
+					>
+						<svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+							<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+						</svg>
+						GitHub Profile
+					</a>
+					<a
+						href="mailto:irfanalkhotiri@gmail.com"
+						class="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-200 rounded-xl text-sm transition-all duration-300 shadow-sm"
+					>
+						Hubungi Saya
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
 <!-- CTA Section -->
 <section
 	class="py-24 px-6 relative overflow-hidden"
@@ -385,7 +508,7 @@
 		class="absolute bottom-0 left-0 w-60 h-60 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3"
 	></div>
 
-	<div class="max-w-3xl mx-auto text-center relative z-10" use:reveal={{ stagger: 100 }}>
+	<div class="max-w-3xl mx-auto text-center relative z-10" use:reveal={{ selector: ':scope > h2, :scope > p', stagger: 100 }}>
 		<h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-6 leading-tight">
 			Siap untuk Belajar<br />
 			<span class="text-amber-400">Fullstack Development?</span>
@@ -394,8 +517,12 @@
 			Daftar sekarang dan eksplorasi seluruh fitur admin panel yang sudah dibangun. Source code
 			tersedia lengkap untuk dipelajari.
 		</p>
-		<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+		<div
+			use:reveal={{ duration: 700, delay: 300 }}
+			class="flex flex-col sm:flex-row items-center justify-center gap-4"
+		>
 			<a
+				data-reveal-animation="fade-right"
 				href="/register"
 				class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-400 hover:bg-amber-300 text-[#3f231c] font-extrabold rounded-2xl shadow-lg shadow-amber-400/20 hover:-translate-y-0.5 transition-all duration-300 text-sm"
 			>
@@ -416,6 +543,7 @@
 				</svg>
 			</a>
 			<a
+				data-reveal-animation="fade-left"
 				href="/login"
 				class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-2xl transition-all duration-300 text-sm"
 			>

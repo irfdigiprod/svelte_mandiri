@@ -333,14 +333,41 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 	/** Setup-phase double-rAF handle */
 	let setupRaf: number | null = null;
 
+	// ── Child-Specific Config Reader ──────────────────────────────
+
+	/**
+	 * Reads override configurations from a child's dataset attributes
+	 * (e.g. data-reveal-animation, data-reveal-delay, data-reveal-duration,
+	 * data-reveal-distance, data-reveal-easing) falling back to the parent config.
+	 */
+	function getChildConfig(child: HTMLElement) {
+		const animAttr = child.getAttribute('data-reveal-animation');
+		const animation = (animAttr && animAttr in ANIMATIONS ? animAttr : config.animation) as AnimationType;
+
+		const delayAttr = child.getAttribute('data-reveal-delay');
+		const delay = delayAttr ? parseInt(delayAttr, 10) : config.delay;
+
+		const durationAttr = child.getAttribute('data-reveal-duration');
+		const duration = durationAttr ? parseInt(durationAttr, 10) : config.duration;
+
+		const distanceAttr = child.getAttribute('data-reveal-distance');
+		const distance = distanceAttr ? parseInt(distanceAttr, 10) : config.distance;
+
+		const easingAttr = child.getAttribute('data-reveal-easing');
+		const easing = easingAttr || config.easing;
+
+		return { animation, delay, duration, distance, easing };
+	}
+
 	// ── Hidden State Factory ──────────────────────────────────────
 
 	/**
-	 * Returns the hidden AnimationState for the currently configured
+	 * Returns the hidden AnimationState for the child's configured
 	 * animation type and distance.
 	 */
-	function hiddenState(): AnimationState {
-		return ANIMATIONS[config.animation](config.distance);
+	function hiddenState(child: HTMLElement): AnimationState {
+		const childConfig = getChildConfig(child);
+		return ANIMATIONS[childConfig.animation](childConfig.distance);
 	}
 
 	// ── Per-Child Style Helpers ───────────────────────────────────
@@ -351,7 +378,7 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 	 */
 	function setChildHidden(child: HTMLElement): void {
 		child.style.willChange = WILL_CHANGE_ACTIVE;
-		applyState(child, hiddenState());
+		applyState(child, hiddenState(child));
 	}
 
 	/**
@@ -362,6 +389,7 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 	 * to release GPU memory.
 	 */
 	function animateChildIn(child: HTMLElement): void {
+		const childConfig = getChildConfig(child);
 		const id = requestAnimationFrame(() => {
 			rafHandles.delete(child);
 			applyState(child, VISIBLE_STATE);
@@ -370,7 +398,7 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 			const wcTimer = setTimeout(() => {
 				child.style.willChange = 'auto';
 				wcTimers.delete(child);
-			}, config.duration + 50);
+			}, childConfig.duration + 50);
 
 			wcTimers.set(child, wcTimer);
 		});
@@ -395,7 +423,7 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 		const id = requestAnimationFrame(() => {
 			rafHandles.delete(child);
 			child.style.willChange = WILL_CHANGE_ACTIVE;
-			applyState(child, hiddenState());
+			applyState(child, hiddenState(child));
 		});
 
 		rafHandles.set(child, id);
@@ -406,7 +434,7 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 	/**
 	 * Reveal all children with stagger delays.
 	 *
-	 * Each child's effective delay = config.delay + (config.stagger × index).
+	 * Each child's effective delay = childConfig.delay + (config.stagger × index).
 	 * Children with zero effective delay are animated immediately via rAF.
 	 */
 	function showAll(): void {
@@ -414,7 +442,8 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 		ensureTransitions();
 
 		children.forEach((child, index) => {
-			const effectiveDelay = config.delay + config.stagger * index;
+			const childConfig = getChildConfig(child);
+			const effectiveDelay = childConfig.delay + config.stagger * index;
 
 			if (effectiveDelay <= 0) {
 				animateChildIn(child);
@@ -510,9 +539,9 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 		void node.offsetHeight;
 
 		// Now safe to add transitions
-		const transition = buildTransition(config.duration, config.easing);
 		children.forEach((child) => {
-			child.style.transition = transition;
+			const childConfig = getChildConfig(child);
+			child.style.transition = buildTransition(childConfig.duration, childConfig.easing);
 		});
 
 		transitionsReady = true;
@@ -604,9 +633,9 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 		setupRaf = requestAnimationFrame(() => {
 			setupRaf = requestAnimationFrame(() => {
 				setupRaf = null;
-				const transition = buildTransition(config.duration, config.easing);
 				children.forEach((child) => {
-					child.style.transition = transition;
+					const childConfig = getChildConfig(child);
+					child.style.transition = buildTransition(childConfig.duration, childConfig.easing);
 				});
 				transitionsReady = true;
 			});
