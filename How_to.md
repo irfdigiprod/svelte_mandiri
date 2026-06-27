@@ -1152,7 +1152,7 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 
 ## 9. Komponen ImportExcelModal (Reusable)
 
-Komponen **`ImportExcelModal`** membungkus modal impor data berformat CSV/Excel yang dilengkapi dengan visual stepper (Unggah, Review, dan Proses), pengunduh berkas template resmi, filter review, validasi error (deteksi sel kosong, password minimal 6 karakter, email tidak valid, email kembar dalam berkas, dan email yang sudah terdaftar di database), serta baris progress melingkar hijau selama proses insert ke database.
+Komponen **`ImportExcelModal`** adalah modal berfitur lengkap untuk melakukan proses impor data massal dari file Excel (format `.csv`). Komponen ini dirancang secara elegan untuk meminimalkan beban di database dengan melakukan validasi awal secara penuh di sisi klien.
 
 ### Lokasi Impor
 ```typescript
@@ -1168,6 +1168,42 @@ import ImportExcelModal from '../../../components/ImportExcelModal.svelte';
 | `show` | `boolean` (bindable) | Status tampil/sembunyi modal. |
 | `existingUsers` | `any[]` | Array user aktif dari database (untuk validasi duplikasi email/username). |
 | `onSuccess` | `() => Promise<void> \| void` | Callback asinkronus yang dipanggil setelah seluruh data berhasil diimpor. |
+
+---
+
+### Alur Kerja Interaktif (3-Step Stepper)
+
+Komponen ini membagi proses impor menjadi 3 fase terpadu:
+
+```
+[1. Unggah] ───> [2. Review & Validasi] ───> [3. Proses Data]
+```
+
+#### Tahap 1: Unggah File
+* **Fungsi**: Pengguna dapat menyeret & menjatuhkan file CSV ke dalam area drop zone, atau mengkliknya untuk memilih file.
+* **Template Unduhan**: Terdapat tombol **Unduh Template** yang menghasilkan file CSV dengan struktur header kolom standar berikut:
+  ```csv
+  Nama,Username (Email),Email,Password
+  ```
+
+#### Tahap 2: Review (Pencarian, Pagination & Validasi)
+Setelah file berhasil diunggah, parser CSV internal akan membaca file secara realtime dan melakukan validasi komprehensif:
+* **Deteksi Sel Kosong**: Memastikan kolom wajib (`Nama`, `Username`, `Email`, `Password`) tidak dibiarkan kosong.
+* **Format Email**: Memeriksa kecocokan alamat email menggunakan Regex standar.
+* **Validasi Duplikasi Internal**: Mendeteksi jika terdapat baris data dengan email atau username kembar di dalam file CSV yang sama.
+* **Validasi Duplikasi Database**: Mencocokkan data CSV terhadap prop `existingUsers` untuk memastikan email belum terdaftar di database.
+* **Kekuatan Sandi**: Memastikan password minimal memiliki panjang 6 karakter.
+
+**Fitur Kontrol di Layar Review:**
+* **Pencarian Realtime**: Pengguna dapat mencari data spesifik berdasarkan nama, email, atau error tertentu.
+* **Paginasi Grid**: Pilihan baris halaman: `5`, `10`, `20`, `50`, dan `All`.
+* **Tampilan Fleksibel**: Toggle view antara **Tabel** (scrolling horizontal) dan **Kartu**.
+* **Penanda Error Visual**: Data tidak valid akan diwarnai merah dengan deskripsi error yang sangat spesifik, sedangkan data valid ditandai badge hijau `"VALID"`.
+
+#### Tahap 3: Proses (Progress Ring Melingkar Hijau)
+* **Progress Dinamis**: Saat tombol proses diklik, modal menampilkan indikator persentase memutar berbentuk lingkaran hijau (menggunakan visual SVG stroke-dasharray).
+* **Pengiriman Batch**: Hanya baris berstatus **VALID** yang dikirim secara asinkron ke server untuk disimpan di database.
+* **Hasil Akhir**: Setelah selesai, modal menampilkan ringkasan jumlah data yang **Berhasil diimpor** dan data yang **Gagal/Dilewati**.
 
 ---
 
@@ -1204,6 +1240,30 @@ Berikut adalah contoh pemanggilan `ImportExcelModal` pada file induk Svelte:
 	onSuccess={handleSuccess}
 />
 ```
+
+---
+
+### Cara Modifikasi untuk Struktur Data Lain
+
+Jika Anda ingin menggunakan komponen ini untuk struktur data berbeda (misalnya impor data **Produk**), ikuti langkah kustomisasi berikut pada salinan file komponen Anda:
+
+1. **Ubah String Template CSV** pada fungsi `downloadTemplate()`:
+   ```typescript
+   const csvContent = "data:text/csv;charset=utf-8,Nama Produk,SKU,Kategori,Harga\nLaptop Asus,LAP-ASUS-01,Elektronik,15000000\n";
+   ```
+2. **Sesuaikan Logika Pemetaan Kolom** pada fungsi `processParsedLines(lines)`:
+   ```typescript
+   const nameIndex = headers.findIndex(h => h.includes('nama'));
+   const skuIndex = headers.findIndex(h => h.includes('sku'));
+   // Tambahkan pengecekan validasi kustom (misal: format SKU, harga minimal)
+   ```
+3. **Ubah Endpoint POST** pada fungsi `startImport()` untuk mengirim data ke endpoint produk Anda:
+   ```typescript
+   const response = await fetch('/admin/products/create?/create', {
+       method: 'POST',
+       body: formData
+   });
+   ```
 
 ---
 
