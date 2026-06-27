@@ -608,9 +608,10 @@
 			method="POST"
 			action="?/delete"
 			use:enhance={() => {
-				return () => {
+				return async ({ update }) => {
 					showDeleteModal = false;
 					userToDelete = null;
+					await update();
 				};
 			}}
 		>
