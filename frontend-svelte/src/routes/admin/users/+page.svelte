@@ -42,11 +42,51 @@
 	let importResults = $state({ successCount: 0, failCount: 0 });
 	let fileInput = $state<HTMLInputElement | null>(null);
 	let importViewMode = $state<'table' | 'card'>('table');
+	let importSearchQuery = $state('');
+	let importPageSize = $state<'5' | '10' | '20' | '50' | 'All'>('5');
+	let importCurrentPage = $state(1);
+
+	let filteredImportUsers = $derived(
+		parsedUsers.filter(u => {
+			if (!importSearchQuery) return true;
+			const q = importSearchQuery.toLowerCase();
+			return (
+				(u.name || '').toLowerCase().includes(q) ||
+				(u.username || '').toLowerCase().includes(q) ||
+				(u.email || '').toLowerCase().includes(q) ||
+				(u.errors || []).some((err: string) => err.toLowerCase().includes(q))
+			);
+		})
+	);
+
+	let paginatedImportUsers = $derived.by(() => {
+		if (importPageSize === 'All') return filteredImportUsers;
+		const size = parseInt(importPageSize);
+		const start = (importCurrentPage - 1) * size;
+		return filteredImportUsers.slice(start, start + size);
+	});
+
+	let totalImportPages = $derived.by(() => {
+		if (importPageSize === 'All') return 1;
+		const size = parseInt(importPageSize);
+		return Math.ceil(filteredImportUsers.length / size) || 1;
+	});
+
+	$effect(() => {
+		const q = importSearchQuery;
+		const s = importPageSize;
+		untrack(() => {
+			importCurrentPage = 1;
+		});
+	});
 
 	function openImportModal() {
 		importStep = 'upload';
 		parsedUsers = [];
 		importProgress = 0;
+		importSearchQuery = '';
+		importPageSize = '5';
+		importCurrentPage = 1;
 		showImportModal = true;
 	}
 
@@ -1038,10 +1078,40 @@
 				</div>
 			</div>
 
-			<!-- Review Data Table / Card View Mode Toggle -->
-			<div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
-				<span class="text-xs font-bold text-slate-500 pl-2">Tampilan Preview:</span>
-				<div class="flex items-center gap-1.5 p-0.5 bg-white border border-slate-200 rounded-lg">
+			<!-- Controls Bar (Search, Page Size, View Toggle) -->
+			<div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+				<!-- Left: Search and Page Size -->
+				<div class="flex items-center gap-3 w-full sm:w-auto flex-grow">
+					<!-- Search -->
+					<div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+						<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+							<iconify-icon icon="solar:magnifer-outline" class="text-sm"></iconify-icon>
+						</span>
+						<input
+							type="text"
+							bind:value={importSearchQuery}
+							placeholder="Cari nama, username, email..."
+							class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 text-slate-800 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-400 text-xs transition duration-200"
+						/>
+					</div>
+					<!-- Page Size -->
+					<div class="flex items-center gap-2 flex-shrink-0">
+						<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Baris:</span>
+						<select
+							bind:value={importPageSize}
+							class="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-400 font-medium"
+						>
+							<option value="5">5</option>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="50">50</option>
+							<option value="All">All</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- Right: View Mode Toggle -->
+				<div class="flex items-center gap-1.5 p-0.5 bg-white border border-slate-205 rounded-lg flex-shrink-0">
 					<button
 						type="button"
 						onclick={() => (importViewMode = 'table')}
@@ -1075,7 +1145,7 @@
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-slate-50">
-							{#each parsedUsers as user}
+							{#each paginatedImportUsers as user}
 								<tr class={user.isValid ? 'hover:bg-slate-50/50' : 'bg-red-50/20 hover:bg-red-50/40'}>
 									<td class="px-4 py-3 font-semibold">
 										{#if user.isValid}
@@ -1108,7 +1178,7 @@
 			{:else}
 				<!-- Review Data Card Grid -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-1">
-					{#each parsedUsers as user}
+					{#each paginatedImportUsers as user}
 						<div class="p-4 border rounded-2xl flex flex-col justify-between {user.isValid ? 'border-slate-200 bg-slate-50/10' : 'border-red-200 bg-red-50/10'}">
 							<div class="flex items-center justify-between mb-3">
 								<span class="font-bold text-slate-800 text-xs">{user.name || '-'}</span>
@@ -1135,6 +1205,42 @@
 							{/if}
 						</div>
 					{/each}
+				</div>
+			{/if}
+
+			<!-- Pagination Controls for Importer -->
+			{#if importPageSize !== 'All' && totalImportPages > 1}
+				<div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
+					<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+						Menampilkan {(importCurrentPage - 1) * parseInt(importPageSize) + 1} - {Math.min(importCurrentPage * parseInt(importPageSize), filteredImportUsers.length)} dari {filteredImportUsers.length} baris
+					</span>
+					<div class="flex items-center gap-1">
+						<button
+							type="button"
+							onclick={() => (importCurrentPage = Math.max(1, importCurrentPage - 1))}
+							disabled={importCurrentPage === 1}
+							class="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 text-xs rounded-lg transition-colors font-semibold"
+						>
+							Prev
+						</button>
+						{#each Array(totalImportPages) as _, i}
+							<button
+								type="button"
+								onclick={() => (importCurrentPage = i + 1)}
+								class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage === i + 1 ? 'bg-[#3f231c] text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}"
+							>
+								{i + 1}
+							</button>
+						{/each}
+						<button
+							type="button"
+							onclick={() => (importCurrentPage = Math.min(totalImportPages, importCurrentPage + 1))}
+							disabled={importCurrentPage === totalImportPages}
+							class="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 text-xs rounded-lg transition-colors font-semibold"
+						>
+							Next
+						</button>
+					</div>
 				</div>
 			{/if}
 		</div>
