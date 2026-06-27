@@ -301,17 +301,17 @@
 
 	// Selection helpers
 	let isAllSelected = $derived(
-		paginatedUsers.length > 0 && paginatedUsers.every((u: any) => selectedIds.includes(u.id))
+		filteredUsers.length > 0 && filteredUsers.every((u: any) => selectedIds.includes(u.id))
 	);
 
 	function toggleSelectAll() {
 		if (isAllSelected) {
-			// Unselect all on the current page
-			const currentPageIds = paginatedUsers.map((u: any) => u.id);
-			selectedIds = selectedIds.filter((id: number) => !currentPageIds.includes(id));
+			// Unselect all matching users
+			const filteredUserIds = filteredUsers.map((u: any) => u.id);
+			selectedIds = selectedIds.filter((id: number) => !filteredUserIds.includes(id));
 		} else {
-			// Select all on the current page
-			const newIds = paginatedUsers
+			// Select all matching users across all pages
+			const newIds = filteredUsers
 				.map((u: any) => u.id)
 				.filter((id: number) => !selectedIds.includes(id));
 			selectedIds = [...selectedIds, ...newIds];
