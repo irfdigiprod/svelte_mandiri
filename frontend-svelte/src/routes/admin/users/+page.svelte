@@ -3,11 +3,21 @@
 	import { fade, fly } from 'svelte/transition';
 	import { page } from '$app/state';
 	import { untrack } from 'svelte';
+	import Modal from '../../../components/Modal.svelte';
 
 	let { data } = $props();
 
 	// View toggle state
 	let viewMode = $state<'table' | 'card'>('table');
+
+	// Delete confirmation modal state
+	let showDeleteModal = $state(false);
+	let userToDelete = $state<any>(null);
+
+	function confirmDelete(user: any) {
+		userToDelete = user;
+		showDeleteModal = true;
+	}
 
 	// Local search state
 	let searchQuery = $state('');
@@ -413,15 +423,13 @@
 											>
 												EDIT
 											</a>
-											<form method="POST" action="?/delete" use:enhance class="inline">
-												<input type="hidden" name="id" value={user.id} />
-												<button
-													type="submit"
-													class="px-3 py-1.5 text-xs font-bold bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-lg transition-colors"
-												>
-													DELETE
-												</button>
-											</form>
+											<button
+												type="button"
+												onclick={() => confirmDelete(user)}
+												class="px-3 py-1.5 text-xs font-bold bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-lg transition-colors"
+											>
+												DELETE
+											</button>
 										</div>
 									</td>
 								</tr>
@@ -501,15 +509,13 @@
 								>
 									EDIT
 								</a>
-								<form method="POST" action="?/delete" use:enhance class="flex-grow">
-									<input type="hidden" name="id" value={user.id} />
-									<button
-										type="submit"
-										class="w-full py-2 text-xs font-bold bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl transition-colors"
-									>
-										DELETE
-									</button>
-								</form>
+								<button
+									type="button"
+									onclick={() => confirmDelete(user)}
+									class="w-full py-2 text-xs font-bold bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl transition-colors flex-grow"
+								>
+									DELETE
+								</button>
 							</div>
 						</div>
 					{/each}
@@ -569,3 +575,52 @@
 		</div>
 	</div>
 </div>
+
+<Modal
+	bind:show={showDeleteModal}
+	title="Konfirmasi Hapus User"
+	size="sm"
+	onclose={() => {
+		userToDelete = null;
+	}}
+>
+	<div class="space-y-4">
+		<p class="text-slate-600">
+			Apakah Anda yakin ingin menghapus user <strong class="text-slate-900">{userToDelete?.name}</strong> (username: @{userToDelete?.username})?
+		</p>
+		<p class="text-xs text-red-500 font-medium">
+			Tindakan ini tidak dapat dibatalkan. Semua data terkait user ini akan dihapus secara permanen.
+		</p>
+	</div>
+
+	{#snippet footer()}
+		<button
+			type="button"
+			onclick={() => {
+				showDeleteModal = false;
+				userToDelete = null;
+			}}
+			class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+		>
+			Batal
+		</button>
+		<form
+			method="POST"
+			action="?/delete"
+			use:enhance={() => {
+				return () => {
+					showDeleteModal = false;
+					userToDelete = null;
+				};
+			}}
+		>
+			<input type="hidden" name="id" value={userToDelete?.id} />
+			<button
+				type="submit"
+				class="px-4 py-2 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors shadow-sm"
+			>
+				Ya, Hapus
+			</button>
+		</form>
+	{/snippet}
+</Modal>
