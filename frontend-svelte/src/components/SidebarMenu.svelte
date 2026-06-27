@@ -62,10 +62,15 @@
 		{ name: 'Audit Trail', icon: 'solar:file-text-outline', href: '/admin/security/audit' }
 	];
 
+	const aboutMenuItems: MenuItem[] = [
+		{ name: 'Tentang Aplikasi', icon: 'solar:info-circle-outline', href: '/admin/about' }
+	];
+
 	// Pilih menu berdasarkan kategori aktif
 	let menuItems = $derived.by((): MenuItem[] => {
 		if (category === 'settings') return settingsMenuItems;
 		if (category === 'security') return securityMenuItems;
+		if (category === 'about') return aboutMenuItems;
 		return appsMenuItems;
 	});
 

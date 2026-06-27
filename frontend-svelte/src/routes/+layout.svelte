@@ -19,13 +19,14 @@
 	let sidebarOpen = $state(false);
 
 	// State kategori sidebar aktif
-	type SidebarCategory = 'apps' | 'settings' | 'security';
+	type SidebarCategory = 'apps' | 'settings' | 'security' | 'about';
 	let activeCategory = $state<SidebarCategory>('apps');
 
 	const categoryLabels: Record<SidebarCategory, string> = {
 		apps: 'Apps',
 		settings: 'Settings',
-		security: 'Security'
+		security: 'Security',
+		about: 'About'
 	};
 
 	function setCategory(cat: SidebarCategory) {
@@ -42,7 +43,9 @@
 		const path = page.url.pathname;
 		sidebarOpen = false;
 
-		if (path.startsWith('/admin/settings')) {
+		if (path === '/admin/about') {
+			activeCategory = 'about';
+		} else if (path.startsWith('/admin/settings')) {
 			activeCategory = 'settings';
 		} else if (path.startsWith('/admin/security')) {
 			activeCategory = 'security';
@@ -115,7 +118,7 @@
 							aria-label="Apps Category"
 							onclick={() => setCategory('apps')}
 							title="Apps"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'apps' && page.url.pathname !== '/admin/about'
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'apps'
 								? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20'
 								: 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}"
 						>
@@ -126,8 +129,7 @@
 							aria-label="Settings Category"
 							onclick={() => setCategory('settings')}
 							title="Settings"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory ===
-								'settings' || activeCategory === 'security'
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'settings' || activeCategory === 'security'
 								? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20'
 								: 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}"
 						>
@@ -141,8 +143,7 @@
 							href="/admin/about"
 							aria-label="App Info"
 							title="Info"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {page.url.pathname ===
-							'/admin/about'
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'about'
 								? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20'
 								: 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}"
 						>
