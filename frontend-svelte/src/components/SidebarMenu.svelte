@@ -30,6 +30,8 @@
 	const appsMenuItems: MenuItem[] = [
 		{ name: 'Dashboard', icon: 'solar:wallet-2-outline', href: '/admin/dashboard' },
 		{ name: 'User Profile', icon: 'solar:user-circle-outline', href: '/admin/profile' },
+		{ name: 'Landing Page', icon: 'solar:globus-outline', href: '/' },
+		{ name: 'Latihan', icon: 'solar:user-circle-outline', href: '/admin/latihan' },
 		{
 			name: 'Users',
 			icon: 'solar:users-group-two-rounded-outline',
@@ -37,15 +39,18 @@
 		}
 	];
 
-	
 	const settingsMenuItems: MenuItem[] = [
 		{ name: 'Pengaturan Umum', icon: 'solar:tuning-2-outline', href: '/admin/settings/general' },
-		{ name: 'Hak Akses', icon: 'solar:user-id-outline', href: '/admin/settings/roles' },
+		{ name: 'Hak Akses', icon: 'solar:user-id-outline', href: '/admin/settings/roles' }
 	];
 
 	const securityMenuItems: MenuItem[] = [
 		{ name: 'Log Aktivitas', icon: 'solar:history-outline', href: '/admin/security/logs' },
-		{ name: 'Manajemen Sesi', icon: 'solar:monitor-smartphone-outline', href: '/admin/security/sessions' },
+		{
+			name: 'Manajemen Sesi',
+			icon: 'solar:monitor-smartphone-outline',
+			href: '/admin/security/sessions'
+		},
 		{
 			name: 'Kebijakan',
 			icon: 'solar:lock-outline',
@@ -172,7 +177,8 @@
 				</div>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name] || searchQuery.trim()
+					class="h-3.5 w-3.5 transform transition-transform duration-200 {openMenus[item.name] ||
+					searchQuery.trim()
 						? 'rotate-180'
 						: ''}"
 					fill="none"
@@ -253,9 +259,7 @@
 	<div class="flex-grow overflow-y-auto px-3 py-2 space-y-1 scrollbar-thin">
 		{#if searchQuery.trim()}
 			{#if searchResults.length === 0}
-				<div class="text-center py-8 text-slate-400 text-xs">
-					Tidak ada menu yang cocok
-				</div>
+				<div class="text-center py-8 text-slate-400 text-xs">Tidak ada menu yang cocok</div>
 			{:else}
 				{#each searchResults as group}
 					<div class="mb-4">
