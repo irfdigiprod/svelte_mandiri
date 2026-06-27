@@ -664,7 +664,7 @@
 							filteredImportUsers.length
 						)} dari {filteredImportUsers.length} baris
 					</span>
-					<div class="flex items-center gap-1">
+					<div class="flex items-center gap-1.5 sm:gap-1">
 						<button
 							type="button"
 							onclick={() => (importCurrentPage = Math.max(1, importCurrentPage - 1))}
@@ -673,23 +673,33 @@
 						>
 							Prev
 						</button>
-						{#each visibleImportPages as pageNum}
-							{#if pageNum === '...'}
-								<span class="h-7 w-7 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
-									...
-								</span>
-							{:else}
-								<button
-									type="button"
-									onclick={() => (importCurrentPage = pageNum as number)}
-									class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage === pageNum
-										? 'bg-[#3f231c] text-white shadow-sm'
-										: 'text-slate-500 hover:bg-slate-50'}"
-								>
-									{pageNum}
-								</button>
-							{/if}
-						{/each}
+
+						<!-- Desktop Page Numbers -->
+						<div class="hidden sm:flex items-center gap-1">
+							{#each visibleImportPages as pageNum}
+								{#if pageNum === '...'}
+									<span class="h-7 w-7 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
+										...
+									</span>
+								{:else}
+									<button
+										type="button"
+										onclick={() => (importCurrentPage = pageNum as number)}
+										class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage === pageNum
+											? 'bg-[#3f231c] text-white shadow-sm'
+											: 'text-slate-500 hover:bg-slate-50'}"
+									>
+										{pageNum}
+									</button>
+								{/if}
+							{/each}
+						</div>
+
+						<!-- Mobile Page Indicator -->
+						<span class="flex sm:hidden px-3 text-xs font-bold text-slate-700 select-none">
+							{importCurrentPage} / {totalImportPages}
+						</span>
+
 						<button
 							type="button"
 							onclick={() =>

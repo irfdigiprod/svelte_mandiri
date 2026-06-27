@@ -322,7 +322,7 @@
 			</span>
 
 			{#if pageSize !== 'All' && totalPages > 1}
-				<div class="flex items-center gap-1">
+				<div class="flex items-center gap-1.5 sm:gap-1">
 					<button
 						onclick={() => (currentPage = Math.max(1, currentPage - 1))}
 						disabled={currentPage === 1}
@@ -330,22 +330,32 @@
 					>
 						Prev
 					</button>
-					{#each visiblePages as pageNum}
-						{#if pageNum === '...'}
-							<span class="h-8 w-8 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
-								...
-							</span>
-						{:else}
-							<button
-								onclick={() => (currentPage = pageNum as number)}
-								class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage === pageNum
-									? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10'
-									: 'text-slate-500 hover:bg-slate-50'}"
-							>
-								{pageNum}
-							</button>
-						{/if}
-					{/each}
+
+					<!-- Desktop Page Numbers -->
+					<div class="hidden sm:flex items-center gap-1">
+						{#each visiblePages as pageNum}
+							{#if pageNum === '...'}
+								<span class="h-8 w-8 flex items-center justify-center text-slate-400 text-xs font-bold select-none">
+									...
+								</span>
+							{:else}
+								<button
+									onclick={() => (currentPage = pageNum as number)}
+									class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage === pageNum
+										? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10'
+										: 'text-slate-500 hover:bg-slate-50'}"
+								>
+									{pageNum}
+								</button>
+							{/if}
+						{/each}
+					</div>
+
+					<!-- Mobile Page Indicator -->
+					<span class="flex sm:hidden px-3 text-xs font-bold text-slate-700 select-none">
+						{currentPage} / {totalPages}
+					</span>
+
 					<button
 						onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
 						disabled={currentPage === totalPages}
