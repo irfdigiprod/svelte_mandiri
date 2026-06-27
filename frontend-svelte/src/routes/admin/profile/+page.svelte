@@ -22,10 +22,12 @@
 	<title>My Profile - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="max-w-2xl" in:fade={{ duration: 250 }}>
+<div class="w-full" in:fade={{ duration: 250 }}>
 	<!-- Main Panel Card -->
-	<div class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm" in:fly={{ y: 15, duration: 350, delay: 50 }}>
-		
+	<div
+		class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm"
+		in:fly={{ y: 15, duration: 350, delay: 50 }}
+	>
 		<!-- Header -->
 		<div class="border-b border-slate-100 pb-6 mb-6">
 			<h2 class="text-xl font-bold text-slate-900">User Profile</h2>
@@ -34,9 +36,23 @@
 
 		<!-- Success/Error Alert -->
 		{#if showSuccess}
-			<div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-100 text-sm text-green-600 flex items-center gap-2" transition:fade>
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+			<div
+				class="mb-6 p-4 rounded-xl bg-green-50 border border-green-100 text-sm text-green-600 flex items-center gap-2"
+				transition:fade
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5 text-green-500"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+					/>
 				</svg>
 				Profil Anda berhasil diperbarui!
 			</div>
@@ -51,12 +67,18 @@
 		<form method="POST" action="?/updateProfile" use:enhance class="space-y-5">
 			<!-- Full Name -->
 			<div>
-				<label for="name" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Lengkap</label>
+				<label
+					for="name"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Nama Lengkap</label
+				>
 				<input
 					type="text"
 					id="name"
 					name="name"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.name ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.name
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="Nama Lengkap"
 					value={form?.values?.name ?? data.user?.name ?? ''}
 				/>
@@ -67,12 +89,18 @@
 
 			<!-- Username -->
 			<div>
-				<label for="username" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+				<label
+					for="username"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Username</label
+				>
 				<input
 					type="text"
 					id="username"
 					name="username"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.username ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.username
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="username"
 					value={form?.values?.username ?? data.user?.username ?? ''}
 				/>
@@ -83,12 +111,18 @@
 
 			<!-- Email Address -->
 			<div>
-				<label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Alamat Email</label>
+				<label
+					for="email"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Alamat Email</label
+				>
 				<input
 					type="email"
 					id="email"
 					name="email"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.email ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.email
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="Alamat Email"
 					value={form?.values?.email ?? data.user?.email ?? ''}
 				/>

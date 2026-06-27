@@ -17,10 +17,12 @@
 	<title>Edit User - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="max-w-2xl" in:fade={{ duration: 250 }}>
+<div class="w-full" in:fade={{ duration: 250 }}>
 	<!-- Main Panel Card -->
-	<div class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm" in:fly={{ y: 15, duration: 350, delay: 50 }}>
-		
+	<div
+		class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm"
+		in:fly={{ y: 15, duration: 350, delay: 50 }}
+	>
 		<!-- Header -->
 		<div class="border-b border-slate-100 pb-6 mb-6">
 			<h2 class="text-xl font-bold text-slate-900">Edit User</h2>
@@ -37,12 +39,18 @@
 		<form method="POST" action="?/update" use:enhance class="space-y-5">
 			<!-- Full Name -->
 			<div>
-				<label for="name" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Lengkap</label>
+				<label
+					for="name"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Nama Lengkap</label
+				>
 				<input
 					type="text"
 					id="name"
 					name="name"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.name ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.name
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="Nama Lengkap"
 					value={form?.values?.name ?? data.user?.name ?? ''}
 				/>
@@ -53,12 +61,18 @@
 
 			<!-- Username -->
 			<div>
-				<label for="username" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+				<label
+					for="username"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Username</label
+				>
 				<input
 					type="text"
 					id="username"
 					name="username"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.username ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.username
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="username"
 					value={form?.values?.username ?? data.user?.username ?? ''}
 				/>
@@ -69,12 +83,18 @@
 
 			<!-- Email Address -->
 			<div>
-				<label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Alamat Email</label>
+				<label
+					for="email"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Alamat Email</label
+				>
 				<input
 					type="email"
 					id="email"
 					name="email"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.email ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.email
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="Alamat Email"
 					value={form?.values?.email ?? data.user?.email ?? ''}
 				/>
@@ -85,12 +105,18 @@
 
 			<!-- Password -->
 			<div>
-				<label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password Baru</label>
+				<label
+					for="password"
+					class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"
+					>Password Baru</label
+				>
 				<input
 					type="password"
 					id="password"
 					name="password"
-					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.password ? 'border-red-400 focus:ring-red-400' : 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
+					class="w-full px-4 py-3 bg-slate-50 border {form?.errors?.password
+						? 'border-red-400 focus:ring-red-400'
+						: 'border-[#eef1f6] focus:ring-amber-400 focus:border-amber-400'} text-slate-900 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-1 transition duration-200 text-sm"
 					placeholder="•••••••• (kosongkan jika tidak ingin mengubah)"
 				/>
 				{#if form?.errors?.password}
