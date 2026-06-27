@@ -77,7 +77,7 @@
 >
 	{#if isAdmin}
 		<!-- Layout untuk Halaman Admin -->
-		<div class="flex flex-col md:flex-row min-h-screen">
+		<div class="flex flex-col md:flex-row h-screen overflow-hidden">
 			<!-- Mobile Sidebar Overlay Backdrop -->
 			{#if sidebarOpen}
 				<div
@@ -138,13 +138,17 @@
 
 					<div class="flex flex-col items-center gap-5">
 						<!-- Info Icon -->
-						<button
+						<a
+							href="/admin/about"
 							aria-label="App Info"
 							title="Info"
-							class="h-11 w-11 rounded-2xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-all"
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {page.url.pathname ===
+							'/admin/about'
+								? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20'
+								: 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}"
 						>
 							<iconify-icon icon="solar:info-circle-outline" class="text-xl"></iconify-icon>
-						</button>
+						</a>
 					</div>
 				</div>
 
@@ -181,10 +185,10 @@
 			</aside>
 
 			<!-- Main Content Wrapper (Right) -->
-			<div class="flex-grow flex flex-col min-h-screen w-full overflow-hidden">
+			<div class="flex-grow flex flex-col h-screen w-full overflow-hidden">
 				<!-- Top Bar Header -->
 				<header
-					class="h-16 bg-white border-b border-[#eef1f6] flex items-center justify-between px-6 sm:px-8 sticky top-0 z-40"
+					class="h-16 bg-white border-b border-[#eef1f6] flex items-center justify-between px-6 sm:px-8 flex-shrink-0 z-40"
 				>
 					<div class="flex items-center gap-3">
 						<!-- Mobile Hamburger Menu Button -->
@@ -307,7 +311,7 @@
 				</header>
 
 				<!-- Main Page Content Grid -->
-				<main class="flex-grow p-6 sm:p-8">
+				<main class="flex-grow overflow-y-auto p-6 sm:p-8">
 					{@render children()}
 				</main>
 			</div>
