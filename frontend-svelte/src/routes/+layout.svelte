@@ -115,8 +115,7 @@
 							aria-label="Apps Category"
 							onclick={() => setCategory('apps')}
 							title="Apps"
-							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory ===
-							'apps'
+							class="h-11 w-11 rounded-2xl flex items-center justify-center transition-all duration-200 {activeCategory === 'apps' && page.url.pathname !== '/admin/about'
 								? 'bg-[#3f231c] text-white shadow-lg shadow-[#3f231c]/20'
 								: 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}"
 						>
