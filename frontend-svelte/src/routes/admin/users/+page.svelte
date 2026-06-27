@@ -228,44 +228,18 @@
 					aria-label="List View"
 					class="p-1.5 rounded-lg transition-all {viewMode === 'table'
 						? 'bg-white border border-[#eef1f6] text-slate-800 shadow-sm'
-						: 'text-slate-400 hover:text-slate-600'}"
+						: 'text-slate-400 hover:text-slate-600'} flex items-center justify-center"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-4 w-4"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						/>
-					</svg>
+					<iconify-icon icon="solar:hamburger-menu-outline" class="text-lg"></iconify-icon>
 				</button>
 				<button
 					onclick={() => (viewMode = 'card')}
 					aria-label="Grid View"
 					class="p-1.5 rounded-lg transition-all {viewMode === 'card'
 						? 'bg-white border border-[#eef1f6] text-slate-800 shadow-sm'
-						: 'text-slate-400 hover:text-slate-600'}"
+						: 'text-slate-400 hover:text-slate-600'} flex items-center justify-center"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-4 w-4"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"
-						/>
-					</svg>
+					<iconify-icon icon="solar:widget-outline" class="text-lg"></iconify-icon>
 				</button>
 				<!-- Page Size Selector -->
 				<div class="flex items-center gap-2 text-xs text-slate-500 font-semibold">
