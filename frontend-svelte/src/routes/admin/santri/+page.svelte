@@ -24,7 +24,7 @@
 	<title>Data Santri - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="max-w-5xl" in:fade={{ duration: 250 }}>
+<div class="max-w-5xl mx-auto" in:fade={{ duration: 250 }}>
 	<div class="bg-white border border-[#eef1f6] rounded-[24px] p-6 shadow-sm" in:fly={{ y: 15, duration: 350, delay: 50 }}>
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">

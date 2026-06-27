@@ -42,7 +42,7 @@
 	<title>Absensi Santri - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="max-w-5xl space-y-6" in:fade={{ duration: 250 }}>
+<div class="max-w-5xl mx-auto space-y-6" in:fade={{ duration: 250 }}>
 	<!-- Header Card -->
 	<div class="bg-white border border-[#eef1f6] rounded-[24px] p-6 shadow-sm" in:fly={{ y: 15, duration: 350, delay: 50 }}>
 		<div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">

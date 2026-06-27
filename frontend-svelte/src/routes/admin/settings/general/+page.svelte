@@ -26,7 +26,7 @@
 	<title>Pengaturan Umum - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="max-w-2xl space-y-6" in:fade={{ duration: 250 }}>
+<div class="max-w-2xl mx-auto space-y-6" in:fade={{ duration: 250 }}>
 	<div class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm" in:fly={{ y: 15, duration: 350, delay: 50 }}>
 		<!-- Header -->
 		<div class="flex items-center gap-4 border-b border-slate-100 pb-6 mb-6">

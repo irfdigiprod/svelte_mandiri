@@ -8,7 +8,7 @@
 	<title>Dashboard - Svelte Mandiri</title>
 </svelte:head>
 
-<div class="w-full" in:fade={{ duration: 250 }}>
+<div class="w-full max-w-6xl mx-auto" in:fade={{ duration: 250 }}>
 	<!-- Main Card Panel (White, soft borders, large rounded corners) -->
 	<div
 		class="bg-white border border-[#eef1f6] rounded-[24px] p-8 shadow-sm"
