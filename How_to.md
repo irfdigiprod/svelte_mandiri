@@ -1232,16 +1232,19 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 ---
 
 <a id="9-komponen-importexcelmodal-reusable"></a>
+
+```
+
 ## 9. Komponen ImportExcelModal (Reusable)
 
 Komponen **`ImportExcelModal`** adalah modal berfitur lengkap untuk melakukan proses impor data massal dari file Excel (format `.csv`). Komponen ini dirancang secara elegan untuk meminimalkan beban di database dengan melakukan validasi awal secara penuh di sisi klien.
 
 ### Lokasi Impor
+
 ```typescript
-import ImportExcelModal from '$components/ImportExcelModal.svelte';
-// Atau jika menggunakan absolute/relative path:
-import ImportExcelModal from '../../../components/ImportExcelModal.svelte';
-````
+import ImportExcelModal from "$components/ImportExcelModal.svelte";
+import ImportExcelModal from "../../../components/ImportExcelModal.svelte";
+```
 
 ### Properti (Props) & Bindings
 
