@@ -46,6 +46,7 @@ Tutorial langkah demi langkah membangun aplikasi **Admin Panel** berbasis **Bun 
 Pastikan tools berikut sudah terpasang di komputer Anda sebelum memulai:
 
 ### Bun (JavaScript Runtime)
+
 Bun adalah runtime JavaScript yang lebih cepat dari Node.js. Digunakan untuk menjalankan backend.
 
 ```bash
@@ -57,6 +58,7 @@ bun --version
 ```
 
 ### MySQL
+
 Database yang digunakan. Install via Homebrew (macOS) atau download dari mysql.com.
 
 ```bash
@@ -69,6 +71,7 @@ mysql --version
 ```
 
 ### Node.js (untuk frontend)
+
 Frontend SvelteKit menggunakan Node/npm.
 
 ```bash
@@ -83,7 +86,9 @@ npm --version
 ```
 
 ### Editor Kode
+
 Gunakan **Visual Studio Code** dengan ekstensi:
+
 - `Svelte for VS Code` — syntax highlighting Svelte
 - `Tailwind CSS IntelliSense` — autocomplete Tailwind
 - `ESLint` & `Prettier` — linting & formatting
@@ -152,6 +157,7 @@ bun add -d drizzle-kit @types/bun tsx
 ```
 
 Isi `package.json` setelah install:
+
 ```json
 {
   "name": "backend-api",
@@ -176,6 +182,7 @@ Isi `package.json` setelah install:
 ### 3.2 Konfigurasi Environment
 
 Buat file `backend-api/.env`:
+
 ```env
 DATABASE_URL="mysql://root:PASSWORD@localhost:3306/db_mandiri"
 JWT_SECRET=buat_secret_random_yang_panjang_minimal_32_karakter
@@ -184,12 +191,14 @@ JWT_SECRET=buat_secret_random_yang_panjang_minimal_32_karakter
 > **Catatan:** Ganti `PASSWORD` dengan password MySQL Anda. Jika tidak ada password, hapus saja `PASSWORD@` menjadi `root:@localhost`.
 
 Buat database di MySQL:
+
 ```sql
 -- Jalankan di MySQL CLI atau phpMyAdmin
 CREATE DATABASE db_mandiri;
 ```
 
 Buat file `backend-api/drizzle.config.ts`:
+
 ```typescript
 import type { Config } from "drizzle-kit";
 import "dotenv/config";
@@ -207,6 +216,7 @@ export default {
 ### 3.3 Koneksi Database (DrizzleORM)
 
 Buat file `backend-api/src/db/index.ts`:
+
 ```typescript
 import { drizzle } from "drizzle-orm/mysql2";
 import * as mysql from "mysql2/promise";
@@ -221,6 +231,7 @@ export const db = drizzle(connectionPool);
 ### 3.4 Schema Database
 
 Buat file `backend-api/src/db/schema.ts`:
+
 ```typescript
 import { mysqlTable, serial, varchar, timestamp } from "drizzle-orm/mysql-core";
 
@@ -251,6 +262,7 @@ bunx drizzle-kit migrate
 ### 3.6 Types
 
 Buat file `backend-api/src/types/auth.ts`:
+
 ```typescript
 export type LoginRequest = {
   username: string;
@@ -266,6 +278,7 @@ export type RegisterRequest = {
 ```
 
 Buat file `backend-api/src/types/user.ts`:
+
 ```typescript
 export type UserCreateRequest = {
   name: string;
@@ -286,6 +299,7 @@ export type UserUpdaterequest = {
 ### 3.7 Validasi Schema (Zod)
 
 Buat file `backend-api/src/schemas/auth.schema.ts`:
+
 ```typescript
 import { z } from "zod";
 
@@ -310,6 +324,7 @@ export const loginSchema = z.object({
 ```
 
 Buat file `backend-api/src/schemas/user.schema.ts`:
+
 ```typescript
 import { z } from "zod";
 
@@ -327,11 +342,17 @@ export const createUserSchema = z.object({
 
 export const updateUserSchema = z.object({
   name: z.string().trim().min(1).max(100).optional(),
-  username: z.string().trim().min(3).max(32).regex(/^[a-z0-9_]+$/i).optional(),
+  username: z
+    .string()
+    .trim()
+    .min(3)
+    .max(32)
+    .regex(/^[a-z0-9_]+$/i)
+    .optional(),
   email: z.string().trim().toLowerCase().email().optional(),
   password: z.preprocess(
     (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-    z.string().min(6).max(128).optional()
+    z.string().min(6).max(128).optional(),
   ),
   currentPassword: z.string().optional(),
 });
@@ -340,6 +361,7 @@ export const updateUserSchema = z.object({
 ### 3.8 Utils
 
 Buat file `backend-api/src/utils/validation.ts`:
+
 ```typescript
 import { ZodError } from "zod";
 
@@ -357,13 +379,14 @@ export function formatZodErrors(error: ZodError): Record<string, string> {
 ### 3.9 Middleware Validasi
 
 Buat file `backend-api/src/middlewares/validate.middleware.ts`:
+
 ```typescript
 import { z } from "zod";
 import type { MiddlewareHandler } from "hono";
 import { formatZodErrors } from "../utils/validation";
 
 export function validateBody<T extends z.ZodTypeAny>(
-  schema: T
+  schema: T,
 ): MiddlewareHandler {
   return async (c, next) => {
     // Wajib Content-Type: application/json
@@ -389,7 +412,7 @@ export function validateBody<T extends z.ZodTypeAny>(
           message: "Validation Failed!",
           errors: formatZodErrors(parsed.error),
         },
-        422
+        422,
       );
     }
 
@@ -403,6 +426,7 @@ export function validateBody<T extends z.ZodTypeAny>(
 ### 3.10 Middleware Autentikasi JWT
 
 Buat file `backend-api/src/middlewares/auth.middleware.ts`:
+
 ```typescript
 import type { MiddlewareHandler } from "hono";
 import { verify } from "hono/jwt";
@@ -438,6 +462,7 @@ export const verifyToken: MiddlewareHandler = async (c, next) => {
 ### 3.11 Controllers
 
 **Register Controller** — `backend-api/src/controllers/registerController.ts`:
+
 ```typescript
 import type { Context } from "hono";
 import { db } from "../db";
@@ -448,12 +473,16 @@ import type { RegisterRequest } from "../types/auth";
 export const register = async (c: Context) => {
   try {
     const { name, username, email, password } = c.get(
-      "validatedBody"
+      "validatedBody",
     ) as RegisterRequest;
 
     // Cek duplikat email atau username
     const existing = await db
-      .select({ id: usersTable.id, email: usersTable.email, username: usersTable.username })
+      .select({
+        id: usersTable.id,
+        email: usersTable.email,
+        username: usersTable.username,
+      })
       .from(usersTable)
       .where(or(eq(usersTable.email, email), eq(usersTable.username, username)))
       .limit(1);
@@ -463,10 +492,13 @@ export const register = async (c: Context) => {
       return c.json(
         {
           success: false,
-          message: field === "email" ? "Email sudah terdaftar" : "Username sudah digunakan",
+          message:
+            field === "email"
+              ? "Email sudah terdaftar"
+              : "Username sudah digunakan",
           errors: { [field]: "Telah digunakan" },
         },
-        409
+        409,
       );
     }
 
@@ -474,7 +506,9 @@ export const register = async (c: Context) => {
     const hashedPassword = await Bun.password.hash(password);
 
     // Simpan user baru
-    await db.insert(usersTable).values({ name, username, email, password: hashedPassword });
+    await db
+      .insert(usersTable)
+      .values({ name, username, email, password: hashedPassword });
 
     return c.json({ success: true, message: "Registrasi berhasil!" }, 201);
   } catch (e) {
@@ -485,6 +519,7 @@ export const register = async (c: Context) => {
 ```
 
 **Login Controller** — `backend-api/src/controllers/loginController.ts`:
+
 ```typescript
 import type { Context } from "hono";
 import { db } from "../db";
@@ -532,8 +567,12 @@ export const login = async (c: Context) => {
     const { password: _, ...userData } = user;
 
     return c.json(
-      { success: true, message: "Login Berhasil!", data: { user: userData, token } },
-      200
+      {
+        success: true,
+        message: "Login Berhasil!",
+        data: { user: userData, token },
+      },
+      200,
     );
   } catch {
     return c.json({ success: false, message: "Internal server error" }, 500);
@@ -546,6 +585,7 @@ export const login = async (c: Context) => {
 > Lihat file `src/controllers/userController.ts` di repository untuk kode lengkap CRUD. Fungsi yang dibuat: `getUsers`, `createUser`, `getUserById`, `updateUser`, `deleteUser`.
 
 Poin penting pada `updateUser`:
+
 - Jika user mengubah passwordnya sendiri, wajib mengirim `currentPassword`
 - `currentPassword` diverifikasi dengan `Bun.password.verify()` sebelum password baru disimpan
 - Password baru di-hash dengan `Bun.password.hash()` (Argon2id)
@@ -553,6 +593,7 @@ Poin penting pada `updateUser`:
 ### 3.12 Routes
 
 Buat file `backend-api/src/routes/index.ts`:
+
 ```typescript
 import { Hono } from "hono";
 import { validateBody } from "../middlewares/validate.middleware";
@@ -562,7 +603,11 @@ import { createUserSchema, updateUserSchema } from "../schemas/user.schema";
 import { register } from "../controllers/registerController";
 import { login } from "../controllers/loginController";
 import {
-  getUsers, createUser, getUserById, updateUser, deleteUser,
+  getUsers,
+  createUser,
+  getUserById,
+  updateUser,
+  deleteUser,
 } from "../controllers/userController";
 
 const router = new Hono();
@@ -575,7 +620,12 @@ router.post("/login", validateBody(loginSchema), login);
 router.get("/users", verifyToken, getUsers);
 router.post("/users", verifyToken, validateBody(createUserSchema), createUser);
 router.get("/users/:id", verifyToken, getUserById);
-router.put("/users/:id", verifyToken, validateBody(updateUserSchema), updateUser);
+router.put(
+  "/users/:id",
+  verifyToken,
+  validateBody(updateUserSchema),
+  updateUser,
+);
 router.delete("/users/:id", verifyToken, deleteUser);
 
 export const Routes = router;
@@ -584,6 +634,7 @@ export const Routes = router;
 ### 3.13 Entry Point (index.ts)
 
 Buat file `backend-api/src/index.ts`:
+
 ```typescript
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -642,6 +693,7 @@ bun install
 ### 4.2 Konfigurasi Environment
 
 Buat file `frontend-svelte/.env`:
+
 ```env
 VITE_BACKEND_URL=http://localhost:3000
 ```
@@ -653,23 +705,26 @@ VITE_BACKEND_URL=http://localhost:3000
 File `src/routes/+layout.svelte` adalah layout global yang membungkus semua halaman.
 
 **Struktur layout:**
+
 - Deteksi apakah URL dimulai dengan `/admin` → tampilkan sidebar admin
 - Jika bukan `/admin` → tampilkan navbar sederhana (untuk halaman login/register)
 - Sidebar admin memiliki dua kolom: kolom ikon kecil (category switcher) + kolom menu
 
 **Fitur yang diimplementasi di layout:**
+
 1. **Category Switcher** — 4 ikon di kolom kiri (Apps, Charts, Settings, Security) mengubah isi menu panel
 2. **Profile Dropdown** — klik avatar di header → tampilkan menu Profile, Ganti Password, Logout
 3. **Mobile Sidebar** — sidebar bisa ditarik keluar/masuk di layar kecil (responsive)
 4. **Data User** — nama dan email user diambil dari cookie `user` via `page.data.user`
 
 **Pola pengambilan data user:**
+
 ```typescript
 // src/routes/admin/+layout.server.ts
 export async function load({ cookies }) {
-  const userData = cookies.get('user');
+  const userData = cookies.get("user");
   return {
-    user: userData ? JSON.parse(userData) : null
+    user: userData ? JSON.parse(userData) : null,
   };
 }
 ```
@@ -679,21 +734,25 @@ Data ini kemudian tersedia di semua halaman admin via `page.data.user`.
 ### 4.4 Halaman Login
 
 **`src/routes/login/+page.server.ts`** — menangani form login di sisi server:
+
 ```typescript
-import { fail } from '@sveltejs/kit';
+import { fail } from "@sveltejs/kit";
 
 export const actions = {
   login: async ({ request, cookies }) => {
     const formData = await request.formData();
-    const username = formData.get('username');
-    const password = formData.get('password');
+    const username = formData.get("username");
+    const password = formData.get("password");
 
     // Kirim ke backend API
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      },
+    );
 
     const result = await response.json();
 
@@ -701,20 +760,24 @@ export const actions = {
       return fail(response.status, {
         success: false,
         message: result.message,
-        errors: result.errors || {}
+        errors: result.errors || {},
       });
     }
 
     // Simpan token & data user di cookie (httpOnly = aman dari JavaScript)
-    cookies.set('token', result.data.token, {
-      httpOnly: true, path: '/', maxAge: 60 * 60 // 1 jam
+    cookies.set("token", result.data.token, {
+      httpOnly: true,
+      path: "/",
+      maxAge: 60 * 60, // 1 jam
     });
-    cookies.set('user', JSON.stringify(result.data.user), {
-      httpOnly: true, path: '/', maxAge: 60 * 60
+    cookies.set("user", JSON.stringify(result.data.user), {
+      httpOnly: true,
+      path: "/",
+      maxAge: 60 * 60,
     });
 
     return { success: true };
-  }
+  },
 };
 ```
 
@@ -731,14 +794,17 @@ Semua halaman di dalam `src/routes/admin/` membutuhkan autentikasi. Proteksi dil
 ```typescript
 // Contoh di src/routes/admin/users/+page.server.ts
 export async function load({ fetch, cookies }) {
-  const token = cookies.get('token');
+  const token = cookies.get("token");
 
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
-    headers: {
-      Authorization: `${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/api/users`,
+    {
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
   const result = await response.json();
   return { users: result.data || [] };
@@ -754,17 +820,18 @@ File `src/routes/admin/dashboard/+page.svelte` — halaman sederhana yang menamp
 ### 4.8 Halaman Users (CRUD)
 
 **`src/routes/admin/users/+page.server.ts`** — load data dan handle actions:
+
 ```typescript
 export const actions = {
   // Hapus satu user
   delete: async ({ request, cookies }) => {
     const formData = await request.formData();
-    const id = formData.get('id');
-    const token = cookies.get('token');
+    const id = formData.get("id");
+    const token = cookies.get("token");
 
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `${token}` }
+      method: "DELETE",
+      headers: { Authorization: `${token}` },
     });
 
     return { success: true };
@@ -773,31 +840,31 @@ export const actions = {
   // Hapus banyak user sekaligus (batch delete)
   deleteSelected: async ({ request, cookies }) => {
     const formData = await request.formData();
-    const ids = JSON.parse(formData.get('ids')!.toString());
-    const token = cookies.get('token');
+    const ids = JSON.parse(formData.get("ids")!.toString());
+    const token = cookies.get("token");
 
     for (const id of ids) {
       await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `${token}` }
+        method: "DELETE",
+        headers: { Authorization: `${token}` },
       });
     }
 
     return { success: true };
-  }
+  },
 };
 ```
 
 **`src/routes/admin/users/+page.svelte`** — fitur-fitur yang diimplementasi:
 
-| Fitur | Cara Kerja |
-|-------|-----------|
-| **Toggle Card/Table** | State `viewMode` ('table' \| 'card'), render kondisional |
-| **Search** | State `searchQuery`, filter `data.users` secara reaktif via `$derived` |
-| **Filter Gender** | State `genderFilter`, filter berdasarkan ID genap/ganjil (karena tidak ada kolom gender di DB) |
-| **Pagination** | State `currentPage` dan `pageSize`, slice array `filteredUsers` |
-| **Select All** | State `selectedIds`, computed `isAllSelected` |
-| **Batch Delete** | Form submit `deleteSelected` action dengan `enhance` |
+| Fitur                 | Cara Kerja                                                                                     |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| **Toggle Card/Table** | State `viewMode` ('table' \| 'card'), render kondisional                                       |
+| **Search**            | State `searchQuery`, filter `data.users` secara reaktif via `$derived`                         |
+| **Filter Gender**     | State `genderFilter`, filter berdasarkan ID genap/ganjil (karena tidak ada kolom gender di DB) |
+| **Pagination**        | State `currentPage` dan `pageSize`, slice array `filteredUsers`                                |
+| **Select All**        | State `selectedIds`, computed `isAllSelected`                                                  |
+| **Batch Delete**      | Form submit `deleteSelected` action dengan `enhance`                                           |
 
 ### 4.9 Komponen Sidebar
 
@@ -824,6 +891,7 @@ export const actions = {
 ```
 
 **Fitur sidebar:**
+
 - **Accordion** — menu dengan sub-item bisa dibuka/tutup
 - **Active State** — menu yang aktif diberi highlight kuning `bg-[#f9c74f]`
 - **Search** — filter menu secara realtime berdasarkan input
@@ -834,20 +902,22 @@ export const actions = {
 Logout menggunakan SvelteKit server endpoint, bukan halaman biasa.
 
 **`src/routes/logout/+server.ts`**:
+
 ```typescript
-import type { RequestHandler } from './$types';
-import { redirect } from '@sveltejs/kit';
+import type { RequestHandler } from "./$types";
+import { redirect } from "@sveltejs/kit";
 
 export const GET: RequestHandler = ({ cookies }) => {
   // Hapus cookie token dan user
-  cookies.delete('token', { path: '/' });
-  cookies.delete('user', { path: '/' });
+  cookies.delete("token", { path: "/" });
+  cookies.delete("user", { path: "/" });
   // Redirect ke halaman login
-  throw redirect(302, '/login');
+  throw redirect(302, "/login");
 };
 ```
 
 **Di layout, link logout menggunakan `data-sveltekit-reload`:**
+
 ```html
 <a href="/logout" data-sveltekit-reload>Logout</a>
 ```
@@ -930,6 +1000,7 @@ Cookie `httpOnly` tidak bisa diakses JavaScript di browser, sehingga token aman 
 ## 7. Tips & Troubleshooting
 
 ### Error: Cannot connect to database
+
 ```bash
 # Pastikan MySQL berjalan
 brew services start mysql  # macOS
@@ -939,17 +1010,22 @@ mysql -u root -p -e "SHOW DATABASES;"
 ```
 
 ### Error: JWT invalid
+
 - Pastikan `JWT_SECRET` di `.env` backend dan `.env.local` (jika ada) sudah sama
 - Token expire setelah 1 jam — coba logout dan login ulang
 
 ### Error: CORS
+
 Pastikan di `backend-api/src/index.ts` terdapat:
+
 ```typescript
 app.use("*", cors());
 ```
+
 Dan CORS dipasang **sebelum** routes didaftarkan.
 
 ### Error: Migrations failed
+
 ```bash
 # Reset dan generate ulang
 cd backend-api
@@ -959,10 +1035,12 @@ bunx drizzle-kit migrate
 ```
 
 ### Frontend tidak terhubung ke backend
+
 - Pastikan `VITE_BACKEND_URL` di `frontend-svelte/.env` mengarah ke URL backend yang benar
 - Pastikan backend berjalan terlebih dahulu sebelum frontend
 
 ### Svelte check error
+
 ```bash
 cd frontend-svelte
 bun run check
@@ -973,51 +1051,53 @@ bun run check
 
 ## Teknologi yang Digunakan
 
-| Teknologi | Versi | Fungsi |
-|-----------|-------|--------|
-| **Bun** | ≥1.0 | JavaScript runtime untuk backend |
-| **Hono** | ^4.12 | Web framework backend (ringan & cepat) |
-| **DrizzleORM** | ^0.45 | ORM untuk query MySQL |
-| **MySQL2** | ^3.22 | Driver MySQL untuk Node/Bun |
-| **Zod** | ^4.0 | Validasi schema input |
-| **SvelteKit** | ^2.63 | Full-stack framework frontend |
-| **Svelte** | ^5.0 | UI framework (reactive) |
-| **TailwindCSS** | ^4.3 | Utility-first CSS framework |
-| **TypeScript** | ^6.0 | Type safety untuk JavaScript |
+| Teknologi       | Versi | Fungsi                                 |
+| --------------- | ----- | -------------------------------------- |
+| **Bun**         | ≥1.0  | JavaScript runtime untuk backend       |
+| **Hono**        | ^4.12 | Web framework backend (ringan & cepat) |
+| **DrizzleORM**  | ^0.45 | ORM untuk query MySQL                  |
+| **MySQL2**      | ^3.22 | Driver MySQL untuk Node/Bun            |
+| **Zod**         | ^4.0  | Validasi schema input                  |
+| **SvelteKit**   | ^2.63 | Full-stack framework frontend          |
+| **Svelte**      | ^5.0  | UI framework (reactive)                |
+| **TailwindCSS** | ^4.3  | Utility-first CSS framework            |
+| **TypeScript**  | ^6.0  | Type safety untuk JavaScript           |
 
 ---
 
-*Selamat! Anda kini bisa membangun aplikasi ini secara mandiri. Mulailah dari backend (setup DB → schema → controller → routes), lalu lanjutkan ke frontend (layout → halaman login → halaman admin).*
+_Selamat! Anda kini bisa membangun aplikasi ini secara mandiri. Mulailah dari backend (setup DB → schema → controller → routes), lalu lanjutkan ke frontend (layout → halaman login → halaman admin)._
 
 ---
 
 <a id="8-komponen-datatable-reusable"></a>
+
 ## 8. Komponen DataTable (Reusable)
 
 Komponen **`DataTable`** digunakan untuk menampilkan daftar data dalam bentuk tabel maupun grid kartu secara dinamis, lengkap dengan pencarian, pemilahan baris per halaman, pagination, filter kustom, serta aksi massal (bulk actions).
 
 ### Lokasi Impor
+
 ```typescript
-import DataTable from '$components/DataTable.svelte';
+import DataTable from "$components/DataTable.svelte";
 // Atau jika menggunakan absolute/relative path:
-import DataTable from '../../../components/DataTable.svelte';
+import DataTable from "../../../components/DataTable.svelte";
 ```
 
 ### Properti (Props) & Bindings
 
-| Properti | Tipe | Deskripsi |
-| :--- | :--- | :--- |
-| `items` | `any[]` | Array data yang telah difilter oleh komponen induk (misal hasil search/filter). |
-| `totalItemsCount` | `number` | Jumlah keseluruhan data sebelum difilter (untuk penunjuk *"Showing X to Y of Z"*). |
-| `columns` | `Column[]` | Array berisi struktur kolom `{ key: string, label: string, class?: string }`. |
-| `selectedIds` | `any[]` (bindable) | Array untuk menampung ID baris yang dicentang (dipilih). |
-| `searchQuery` | `string` (bindable) | String kueri pencarian yang diikat ke kolom input pencarian. |
-| `pageSize` | `'5' \| '10' \| '50' \| 'All'` (bindable) | Jumlah item per halaman. |
-| `currentPage` | `number` (bindable) | Halaman aktif saat ini. |
-| `viewMode` | `'table' \| 'card'` (bindable) | Mode tampilan tabel (`table`) atau grid kartu (`card`). |
-| `searchPlaceholder` | `string` (opsional) | Placeholder untuk input teks pencarian. Default: `"Cari..."`. |
-| `filterLabel` | `string` (opsional) | Label tombol filter dropdown. Default: `"Filter"`. |
-| `filterDropdownOpen`| `boolean` (bindable) | Mengatur status buka/tutup dropdown filter. |
+| Properti             | Tipe                                      | Deskripsi                                                                          |
+| :------------------- | :---------------------------------------- | :--------------------------------------------------------------------------------- |
+| `items`              | `any[]`                                   | Array data yang telah difilter oleh komponen induk (misal hasil search/filter).    |
+| `totalItemsCount`    | `number`                                  | Jumlah keseluruhan data sebelum difilter (untuk penunjuk _"Showing X to Y of Z"_). |
+| `columns`            | `Column[]`                                | Array berisi struktur kolom `{ key: string, label: string, class?: string }`.      |
+| `selectedIds`        | `any[]` (bindable)                        | Array untuk menampung ID baris yang dicentang (dipilih).                           |
+| `searchQuery`        | `string` (bindable)                       | String kueri pencarian yang diikat ke kolom input pencarian.                       |
+| `pageSize`           | `'5' \| '10' \| '50' \| 'All'` (bindable) | Jumlah item per halaman.                                                           |
+| `currentPage`        | `number` (bindable)                       | Halaman aktif saat ini.                                                            |
+| `viewMode`           | `'table' \| 'card'` (bindable)            | Mode tampilan tabel (`table`) atau grid kartu (`card`).                            |
+| `searchPlaceholder`  | `string` (opsional)                       | Placeholder untuk input teks pencarian. Default: `"Cari..."`.                      |
+| `filterLabel`        | `string` (opsional)                       | Label tombol filter dropdown. Default: `"Filter"`.                                 |
+| `filterDropdownOpen` | `boolean` (bindable)                      | Mengatur status buka/tutup dropdown filter.                                        |
 
 ### Snippets Pendukung (Svelte 5)
 
@@ -1038,7 +1118,7 @@ Komponen ini memanfaatkan **Snippets** untuk memberikan kendali kustomisasi mark
 
 Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggunakan `DataTable.svelte`:
 
-```html
+````html
 <script lang="ts">
 	import DataTable from '../../../components/DataTable.svelte';
 	import { invalidateAll } from '$app/navigation';
@@ -1050,7 +1130,7 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 	let searchQuery = $state('');
 	let categoryFilter = $state('Semua');
 	let filterDropdownOpen = $state(false);
-	
+
 	let viewMode = $state<'table' | 'card'>('table');
 	let pageSize = $state<'5' | '10' | '50' | 'All'>('10');
 	let currentPage = $state(1);
@@ -1059,7 +1139,7 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 	// 3. Logika Filter data produk di parent
 	let filteredProducts = $derived(
 		data.products?.filter((p: any) => {
-			const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+			const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			                      p.sku.toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesCategory = categoryFilter === 'Semua' || p.category === categoryFilter;
 			return matchesSearch && matchesCategory;
@@ -1161,15 +1241,15 @@ Komponen **`ImportExcelModal`** adalah modal berfitur lengkap untuk melakukan pr
 import ImportExcelModal from '$components/ImportExcelModal.svelte';
 // Atau jika menggunakan absolute/relative path:
 import ImportExcelModal from '../../../components/ImportExcelModal.svelte';
-```
+````
 
 ### Properti (Props) & Bindings
 
-| Properti | Tipe | Deskripsi |
-| :--- | :--- | :--- |
-| `show` | `boolean` (bindable) | Status tampil/sembunyi modal. |
-| `existingUsers` | `any[]` | Array user aktif dari database (untuk validasi duplikasi email/username). |
-| `onSuccess` | `() => Promise<void> \| void` | Callback asinkronus yang dipanggil setelah seluruh data berhasil diimpor. |
+| Properti        | Tipe                          | Deskripsi                                                                 |
+| :-------------- | :---------------------------- | :------------------------------------------------------------------------ |
+| `show`          | `boolean` (bindable)          | Status tampil/sembunyi modal.                                             |
+| `existingUsers` | `any[]`                       | Array user aktif dari database (untuk validasi duplikasi email/username). |
+| `onSuccess`     | `() => Promise<void> \| void` | Callback asinkronus yang dipanggil setelah seluruh data berhasil diimpor. |
 
 ---
 
@@ -1182,30 +1262,35 @@ Komponen ini membagi proses impor menjadi 3 fase terpadu:
 ```
 
 #### Tahap 1: Unggah File
-* **Fungsi**: Pengguna dapat menyeret & menjatuhkan file CSV ke dalam area drop zone, atau mengkliknya untuk memilih file.
-* **Template Unduhan**: Terdapat tombol **Unduh Template** yang menghasilkan file CSV dengan struktur header kolom standar berikut:
+
+- **Fungsi**: Pengguna dapat menyeret & menjatuhkan file CSV ke dalam area drop zone, atau mengkliknya untuk memilih file.
+- **Template Unduhan**: Terdapat tombol **Unduh Template** yang menghasilkan file CSV dengan struktur header kolom standar berikut:
   ```csv
   Nama,Username (Email),Email,Password
   ```
 
 #### Tahap 2: Review (Pencarian, Pagination & Validasi)
+
 Setelah file berhasil diunggah, parser CSV internal akan membaca file secara realtime dan melakukan validasi komprehensif:
-* **Deteksi Sel Kosong**: Memastikan kolom wajib (`Nama`, `Username`, `Email`, `Password`) tidak dibiarkan kosong.
-* **Format Email**: Memeriksa kecocokan alamat email menggunakan Regex standar.
-* **Validasi Duplikasi Internal**: Mendeteksi jika terdapat baris data dengan email atau username kembar di dalam file CSV yang sama.
-* **Validasi Duplikasi Database**: Mencocokkan data CSV terhadap prop `existingUsers` untuk memastikan email belum terdaftar di database.
-* **Kekuatan Sandi**: Memastikan password minimal memiliki panjang 6 karakter.
+
+- **Deteksi Sel Kosong**: Memastikan kolom wajib (`Nama`, `Username`, `Email`, `Password`) tidak dibiarkan kosong.
+- **Format Email**: Memeriksa kecocokan alamat email menggunakan Regex standar.
+- **Validasi Duplikasi Internal**: Mendeteksi jika terdapat baris data dengan email atau username kembar di dalam file CSV yang sama.
+- **Validasi Duplikasi Database**: Mencocokkan data CSV terhadap prop `existingUsers` untuk memastikan email belum terdaftar di database.
+- **Kekuatan Sandi**: Memastikan password minimal memiliki panjang 6 karakter.
 
 **Fitur Kontrol di Layar Review:**
-* **Pencarian Realtime**: Pengguna dapat mencari data spesifik berdasarkan nama, email, atau error tertentu.
-* **Paginasi Grid**: Pilihan baris halaman: `5`, `10`, `20`, `50`, dan `All`.
-* **Tampilan Fleksibel**: Toggle view antara **Tabel** (scrolling horizontal) dan **Kartu**.
-* **Penanda Error Visual**: Data tidak valid akan diwarnai merah dengan deskripsi error yang sangat spesifik, sedangkan data valid ditandai badge hijau `"VALID"`.
+
+- **Pencarian Realtime**: Pengguna dapat mencari data spesifik berdasarkan nama, email, atau error tertentu.
+- **Paginasi Grid**: Pilihan baris halaman: `5`, `10`, `20`, `50`, dan `All`.
+- **Tampilan Fleksibel**: Toggle view antara **Tabel** (scrolling horizontal) dan **Kartu**.
+- **Penanda Error Visual**: Data tidak valid akan diwarnai merah dengan deskripsi error yang sangat spesifik, sedangkan data valid ditandai badge hijau `"VALID"`.
 
 #### Tahap 3: Proses (Progress Ring Melingkar Hijau)
-* **Progress Dinamis**: Saat tombol proses diklik, modal menampilkan indikator persentase memutar berbentuk lingkaran hijau (menggunakan visual SVG stroke-dasharray).
-* **Pengiriman Batch**: Hanya baris berstatus **VALID** yang dikirim secara asinkron ke server untuk disimpan di database.
-* **Hasil Akhir**: Setelah selesai, modal menampilkan ringkasan jumlah data yang **Berhasil diimpor** dan data yang **Gagal/Dilewati**.
+
+- **Progress Dinamis**: Saat tombol proses diklik, modal menampilkan indikator persentase memutar berbentuk lingkaran hijau (menggunakan visual SVG stroke-dasharray).
+- **Pengiriman Batch**: Hanya baris berstatus **VALID** yang dikirim secara asinkron ke server untuk disimpan di database.
+- **Hasil Akhir**: Setelah selesai, modal menampilkan ringkasan jumlah data yang **Berhasil diimpor** dan data yang **Gagal/Dilewati**.
 
 ---
 
@@ -1215,31 +1300,30 @@ Berikut adalah contoh pemanggilan `ImportExcelModal` pada file induk Svelte:
 
 ```html
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-	import ImportExcelModal from '../../../components/ImportExcelModal.svelte';
+  import { invalidateAll } from "$app/navigation";
+  import ImportExcelModal from "../../../components/ImportExcelModal.svelte";
 
-	let { data } = $props();
-	let showImportModal = $state(false);
+  let { data } = $props();
+  let showImportModal = $state(false);
 
-	async function handleSuccess() {
-		// Segarkan data halaman agar tabel induk menampilkan user baru
-		await invalidateAll();
-	}
+  async function handleSuccess() {
+    // Segarkan data halaman agar tabel induk menampilkan user baru
+    await invalidateAll();
+  }
 </script>
 
 <!-- Tombol pemicu buka modal -->
-<button 
-	onclick={() => (showImportModal = true)} 
-	class="px-5 py-3 text-xs font-bold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl flex items-center gap-2"
->
-	📥 Import Excel/CSV
+<button onclick="{()" ="">
+  (showImportModal = true)} class="px-5 py-3 text-xs font-bold bg-white
+  hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl flex
+  items-center gap-2" > 📥 Import Excel/CSV
 </button>
 
 <!-- Komponen Import Excel -->
 <ImportExcelModal
-	bind:show={showImportModal}
-	existingUsers={data.users}
-	onSuccess={handleSuccess}
+  bind:show="{showImportModal}"
+  existingUsers="{data.users}"
+  onSuccess="{handleSuccess}"
 />
 ```
 
@@ -1251,19 +1335,20 @@ Jika Anda ingin menggunakan komponen ini untuk struktur data berbeda (misalnya i
 
 1. **Ubah String Template CSV** pada fungsi `downloadTemplate()`:
    ```typescript
-   const csvContent = "data:text/csv;charset=utf-8,Nama Produk,SKU,Kategori,Harga\nLaptop Asus,LAP-ASUS-01,Elektronik,15000000\n";
+   const csvContent =
+     "data:text/csv;charset=utf-8,Nama Produk,SKU,Kategori,Harga\nLaptop Asus,LAP-ASUS-01,Elektronik,15000000\n";
    ```
 2. **Sesuaikan Logika Pemetaan Kolom** pada fungsi `processParsedLines(lines)`:
    ```typescript
-   const nameIndex = headers.findIndex(h => h.includes('nama'));
-   const skuIndex = headers.findIndex(h => h.includes('sku'));
+   const nameIndex = headers.findIndex((h) => h.includes("nama"));
+   const skuIndex = headers.findIndex((h) => h.includes("sku"));
    // Tambahkan pengecekan validasi kustom (misal: format SKU, harga minimal)
    ```
 3. **Ubah Endpoint POST** pada fungsi `startImport()` untuk mengirim data ke endpoint produk Anda:
    ```typescript
-   const response = await fetch('/admin/products/create?/create', {
-       method: 'POST',
-       body: formData
+   const response = await fetch("/admin/products/create?/create", {
+     method: "POST",
+     body: formData,
    });
    ```
 
@@ -1271,4 +1356,3 @@ Jika Anda ingin menggunakan komponen ini untuk struktur data berbeda (misalnya i
 
 > [!TIP]
 > **Tips Validasi Impor**: Komponen `ImportExcelModal` secara otomatis membandingkan isian kolom `Username (Email)` dan `Email` dalam file CSV terhadap daftar email yang dikirim lewat prop `existingUsers`. Pastikan prop `existingUsers` selalu terisi dengan data pengguna terbaru dari database Anda untuk memastikan review duplikasi berjalan akurat di sisi klien sebelum data dikirim ke server.
-
