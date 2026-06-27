@@ -17,13 +17,13 @@
 		pageSize = $bindable('10'),
 		currentPage = $bindable(1),
 		viewMode = $bindable('table'),
-		searchPlaceholder = "Cari...",
-		
+		searchPlaceholder = 'Cari...',
+
 		// Filter Dropdown
-		filterLabel = "Filter",
+		filterLabel = 'Filter',
 		filterDropdownOpen = $bindable(false),
 		filterOptions, // snippet
-		
+
 		// Body snippets
 		row, // snippet: row(item, isSelected, toggleSelect)
 		card, // snippet: card(item, isSelected, toggleSelect)
@@ -40,7 +40,7 @@
 		searchPlaceholder?: string;
 		filterLabel?: string;
 		filterDropdownOpen?: boolean;
-		
+
 		filterOptions?: import('svelte').Snippet;
 		row: import('svelte').Snippet<[any, boolean, () => void]>;
 		card: import('svelte').Snippet<[any, boolean, () => void]>;
@@ -71,9 +71,7 @@
 			const itemIds = items.map((u: any) => u.id);
 			selectedIds = selectedIds.filter((id: any) => !itemIds.includes(id));
 		} else {
-			const newIds = items
-				.map((u: any) => u.id)
-				.filter((id: any) => !selectedIds.includes(id));
+			const newIds = items.map((u: any) => u.id).filter((id: any) => !selectedIds.includes(id));
 			selectedIds = [...selectedIds, ...newIds];
 		}
 	}
@@ -112,13 +110,18 @@
 		<!-- Left: Controls -->
 		<div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
 			<!-- View Mode Toggle -->
-			<div class="flex items-center p-0.5 bg-slate-50 border border-[#eef1f6] rounded-xl flex-shrink-0">
+			<div
+				class="flex items-center p-0.5 bg-slate-50 border border-[#eef1f6] rounded-xl flex-shrink-0"
+			>
 				<button
 					type="button"
 					onclick={() => (viewMode = 'table')}
 					aria-label="Tampilan Tabel"
 					title="Tampilan Tabel"
-					class="p-2 rounded-lg transition-all flex items-center justify-center {viewMode === 'table' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+					class="p-2 rounded-lg transition-all flex items-center justify-center {viewMode ===
+					'table'
+						? 'bg-[#3f231c] text-white shadow-xs'
+						: 'text-slate-400 hover:text-slate-600'}"
 				>
 					<iconify-icon icon="solar:hamburger-menu-outline" class="text-lg"></iconify-icon>
 				</button>
@@ -127,17 +130,21 @@
 					onclick={() => (viewMode = 'card')}
 					aria-label="Tampilan Card"
 					title="Tampilan Card"
-					class="p-2 rounded-lg transition-all flex items-center justify-center {viewMode === 'card' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+					class="p-2 rounded-lg transition-all flex items-center justify-center {viewMode === 'card'
+						? 'bg-[#3f231c] text-white shadow-xs'
+						: 'text-slate-400 hover:text-slate-600'}"
 				>
 					<iconify-icon icon="solar:widget-outline" class="text-lg"></iconify-icon>
 				</button>
 			</div>
 
 			<!-- Page Size Selector -->
-			<div class="flex items-center p-0.5 bg-slate-50 border border-[#eef1f6] rounded-xl flex-shrink-0 relative">
+			<div
+				class="flex items-center p-0.5 bg-slate-50 border border-[#eef1f6] rounded-xl flex-shrink-0 relative"
+			>
 				<select
 					bind:value={pageSize}
-					class="bg-transparent text-slate-700 text-xs font-bold rounded-lg pl-3 pr-8 py-2 focus:outline-none appearance-none cursor-pointer"
+					class="bg-white w-[60px] border border-slate-200 text-slate-700 text-xs rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-1 focus:ring-amber-400 font-medium"
 				>
 					<option value="5">5</option>
 					<option value="10">10</option>
@@ -220,7 +227,7 @@
 					Batalkan Pilihan
 				</button>
 			</div>
-			
+
 			{#if batchActions}
 				{@render batchActions(selectedIds.length, clearSelection)}
 			{/if}
@@ -229,10 +236,14 @@
 
 	<!-- View renderers -->
 	{#if viewMode === 'table'}
-		<div class="border border-[#eef1f6] rounded-[20px] overflow-hidden overflow-x-auto shadow-xs bg-white">
+		<div
+			class="border border-[#eef1f6] rounded-[20px] overflow-hidden overflow-x-auto shadow-xs bg-white"
+		>
 			<table class="w-full text-left text-xs sm:text-sm text-slate-700 border-collapse">
 				<thead>
-					<tr class="bg-slate-50/70 text-slate-500 border-b border-[#eef1f6] font-bold text-xs uppercase tracking-wider">
+					<tr
+						class="bg-slate-50/70 text-slate-500 border-b border-[#eef1f6] font-bold text-xs uppercase tracking-wider"
+					>
 						<th class="px-6 py-4 w-12 text-center">
 							<input
 								type="checkbox"
@@ -264,11 +275,16 @@
 
 	<!-- Pagination Footer -->
 	{#if items.length > 0}
-		<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100">
+		<div
+			class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100"
+		>
 			<span class="text-xs text-slate-400 font-medium">
-				Showing {pageSize === 'All' ? 1 : (currentPage - 1) * parseInt(pageSize) + 1} to {pageSize === 'All' ? items.length : Math.min(currentPage * parseInt(pageSize), items.length)} of {totalItemsCount} entries
+				Showing {pageSize === 'All' ? 1 : (currentPage - 1) * parseInt(pageSize) + 1} to {pageSize ===
+				'All'
+					? items.length
+					: Math.min(currentPage * parseInt(pageSize), items.length)} of {totalItemsCount} entries
 			</span>
-			
+
 			{#if pageSize !== 'All' && totalPages > 1}
 				<div class="flex items-center gap-1">
 					<button
@@ -281,7 +297,10 @@
 					{#each Array(totalPages) as _, i}
 						<button
 							onclick={() => (currentPage = i + 1)}
-							class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage === i + 1 ? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10' : 'text-slate-500 hover:bg-slate-50'}"
+							class="h-8 w-8 flex items-center justify-center rounded-xl text-xs font-bold transition duration-200 {currentPage ===
+							i + 1
+								? 'bg-[#3f231c] text-white shadow-md shadow-[#3f231c]/10'
+								: 'text-slate-500 hover:bg-slate-50'}"
 						>
 							{i + 1}
 						</button>
@@ -300,7 +319,9 @@
 		<div class="text-center py-12 bg-slate-50/50 border border-dashed border-slate-200 rounded-3xl">
 			<span class="text-3xl block mb-2">🔍</span>
 			<p class="text-sm font-bold text-slate-500">Tidak ada data ditemukan</p>
-			<p class="text-xs text-slate-400 mt-1">Coba sesuaikan kata kunci pencarian atau filter Anda.</p>
+			<p class="text-xs text-slate-400 mt-1">
+				Coba sesuaikan kata kunci pencarian atau filter Anda.
+			</p>
 		</div>
 	{/if}
 </div>

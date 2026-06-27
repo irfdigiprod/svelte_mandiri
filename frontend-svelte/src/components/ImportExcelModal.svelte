@@ -26,7 +26,7 @@
 	let importCurrentPage = $state(1);
 
 	let filteredImportUsers = $derived(
-		parsedUsers.filter(u => {
+		parsedUsers.filter((u) => {
 			if (!importSearchQuery) return true;
 			const q = importSearchQuery.toLowerCase();
 			return (
@@ -72,11 +72,12 @@
 	});
 
 	function downloadTemplate() {
-		const csvContent = "data:text/csv;charset=utf-8,Nama,Username (Email),Email,Password\nJohn Doe,johndoe@example.com,johndoe@example.com,password123\nJane Smith,janesmith@example.com,janesmith@example.com,secret123\n";
+		const csvContent =
+			'data:text/csv;charset=utf-8,Nama,Username (Email),Email,Password\nJohn Doe,johndoe@example.com,johndoe@example.com,password123\nJane Smith,janesmith@example.com,janesmith@example.com,secret123\n';
 		const encodedUri = encodeURI(csvContent);
-		const link = document.createElement("a");
-		link.setAttribute("href", encodedUri);
-		link.setAttribute("download", "template_import_user.csv");
+		const link = document.createElement('a');
+		link.setAttribute('href', encodedUri);
+		link.setAttribute('download', 'template_import_user.csv');
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
@@ -84,12 +85,12 @@
 
 	function parseCSV(text: string): string[][] {
 		const lines = [];
-		let row = [""];
+		let row = [''];
 		let inQuotes = false;
 
 		for (let i = 0; i < text.length; i++) {
 			const c = text[i];
-			const next = text[i+1];
+			const next = text[i + 1];
 			if (c === '"') {
 				if (inQuotes && next === '"') {
 					row[row.length - 1] += '"';
@@ -98,18 +99,18 @@
 					inQuotes = !inQuotes;
 				}
 			} else if (c === ',' && !inQuotes) {
-				row.push("");
+				row.push('');
 			} else if ((c === '\r' || c === '\n') && !inQuotes) {
 				if (c === '\r' && next === '\n') {
 					i++;
 				}
 				lines.push(row);
-				row = [""];
+				row = [''];
 			} else {
 				row[row.length - 1] += c;
 			}
 		}
-		if (row.length > 1 || row[0] !== "") {
+		if (row.length > 1 || row[0] !== '') {
 			lines.push(row);
 		}
 		return lines;
@@ -117,35 +118,39 @@
 
 	function processParsedLines(lines: string[][]) {
 		if (lines.length === 0) return [];
-		
-		const headers = lines[0].map(h => h.trim().toLowerCase());
-		
-		const nameIndex = headers.findIndex(h => h.includes('nama') || h.includes('name'));
-		const usernameIndex = headers.findIndex(h => h.includes('username'));
-		const emailIndex = headers.findIndex(h => h.includes('email'));
-		const passwordIndex = headers.findIndex(h => h.includes('password') || h.includes('sandi'));
-		
+
+		const headers = lines[0].map((h) => h.trim().toLowerCase());
+
+		const nameIndex = headers.findIndex((h) => h.includes('nama') || h.includes('name'));
+		const usernameIndex = headers.findIndex((h) => h.includes('username'));
+		const emailIndex = headers.findIndex((h) => h.includes('email'));
+		const passwordIndex = headers.findIndex((h) => h.includes('password') || h.includes('sandi'));
+
 		const parsedList = [];
 		const seenUsernames = new Set<string>();
 		const seenEmails = new Set<string>();
 
-		const existingUsernames = new Set((existingUsers || []).map((u: any) => (u.username || '').toLowerCase().trim()));
-		const existingEmails = new Set((existingUsers || []).map((u: any) => (u.email || '').toLowerCase().trim()));
+		const existingUsernames = new Set(
+			(existingUsers || []).map((u: any) => (u.username || '').toLowerCase().trim())
+		);
+		const existingEmails = new Set(
+			(existingUsers || []).map((u: any) => (u.email || '').toLowerCase().trim())
+		);
 
 		for (let i = 1; i < lines.length; i++) {
 			const row = lines[i];
 			if (row.length < 2) continue;
-			
+
 			const name = nameIndex !== -1 ? (row[nameIndex] || '').trim() : '';
 			const username = usernameIndex !== -1 ? (row[usernameIndex] || '').trim() : '';
 			const email = emailIndex !== -1 ? (row[emailIndex] || '').trim() : '';
 			const password = passwordIndex !== -1 ? (row[passwordIndex] || '').trim() : '';
-			
+
 			const errors = [];
 			if (!name) errors.push('Nama wajib diisi');
-			
+
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			
+
 			if (!username) {
 				errors.push('Username wajib diisi');
 			} else {
@@ -160,7 +165,7 @@
 					seenUsernames.add(usernameLower);
 				}
 			}
-			
+
 			if (!email) {
 				errors.push('Email wajib diisi');
 			} else {
@@ -175,13 +180,13 @@
 					seenEmails.add(emailLower);
 				}
 			}
-			
+
 			if (!password) {
 				errors.push('Password wajib diisi');
 			} else if (password.length < 6) {
 				errors.push('Password minimal 6 karakter');
 			}
-			
+
 			parsedList.push({
 				name,
 				username,
@@ -198,7 +203,7 @@
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
 		if (!file) return;
-		
+
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			const text = e.target?.result as string;
@@ -212,18 +217,18 @@
 	async function startImport() {
 		importStep = 'processing';
 		importProgress = 0;
-		
-		const validUsers = parsedUsers.filter(u => u.isValid);
+
+		const validUsers = parsedUsers.filter((u) => u.isValid);
 		const total = validUsers.length;
 		if (total === 0) {
 			importStep = 'done';
 			importResults = { successCount: 0, failCount: parsedUsers.length };
 			return;
 		}
-		
+
 		let successCount = 0;
-		let failCount = parsedUsers.filter(u => !u.isValid).length;
-		
+		let failCount = parsedUsers.filter((u) => !u.isValid).length;
+
 		for (let i = 0; i < total; i++) {
 			const user = validUsers[i];
 			const formData = new FormData();
@@ -231,7 +236,7 @@
 			formData.append('username', user.username);
 			formData.append('email', user.email);
 			formData.append('password', user.password);
-			
+
 			try {
 				const response = await fetch('/admin/users/create?/create', {
 					method: 'POST',
@@ -239,7 +244,7 @@
 				});
 				const resultText = await response.text();
 				const parsed = JSON.parse(resultText);
-				
+
 				if (parsed.type === 'success' || (parsed.status && parsed.status < 400)) {
 					successCount++;
 				} else {
@@ -249,13 +254,13 @@
 				console.error(e);
 				failCount++;
 			}
-			
+
 			importProgress = Math.min(100, Math.round(((i + 1) / total) * 100));
 		}
-		
+
 		importResults = { successCount, failCount };
 		importStep = 'done';
-		
+
 		onSuccess();
 	}
 </script>
@@ -281,67 +286,109 @@
 			<button
 				type="button"
 				onclick={startImport}
-				disabled={parsedUsers.filter(u => u.isValid).length === 0}
+				disabled={parsedUsers.filter((u) => u.isValid).length === 0}
 				class="px-4 py-2 text-xs font-bold bg-[#3f231c] hover:bg-[#4a2e2b] text-white disabled:opacity-50 disabled:hover:bg-[#3f231c] rounded-xl transition-colors shadow-sm"
 			>
-				Proses Import ({parsedUsers.filter(u => u.isValid).length} User)
+				Proses Import ({parsedUsers.filter((u) => u.isValid).length} User)
 			</button>
 		{/if}
 	{/snippet}
 
 	<!-- 3-Step Visual Stepper -->
-	<div class="flex items-center justify-between max-w-md mx-auto mb-8 border-b border-slate-100 pb-5">
+	<div
+		class="flex items-center justify-between max-w-md mx-auto mb-8 border-b border-slate-100 pb-5"
+	>
 		<!-- Step 1: Unggah -->
 		<div class="flex items-center gap-2">
-			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'upload' ? 'bg-[#3f231c] text-white shadow-sm' : 'bg-green-100 text-green-700'}">
+			<div
+				class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep ===
+				'upload'
+					? 'bg-[#3f231c] text-white shadow-sm'
+					: 'bg-green-100 text-green-700'}"
+			>
 				{#if importStep !== 'upload'}
 					<iconify-icon icon="solar:check-circle-bold" class="text-base"></iconify-icon>
 				{:else}
 					1
 				{/if}
 			</div>
-			<span class="text-xs font-bold transition-all duration-200 {importStep === 'upload' ? 'text-slate-800' : 'text-slate-400'}">Unggah</span>
+			<span
+				class="text-xs font-bold transition-all duration-200 {importStep === 'upload'
+					? 'text-slate-800'
+					: 'text-slate-400'}">Unggah</span
+			>
 		</div>
-		
+
 		<!-- Line 1 -->
 		<div class="flex-grow h-[2px] mx-3 bg-slate-100">
-			<div class="h-full bg-[#3f231c] transition-all duration-300" style="width: {importStep !== 'upload' ? '100%' : '0%'}"></div>
+			<div
+				class="h-full bg-[#3f231c] transition-all duration-300"
+				style="width: {importStep !== 'upload' ? '100%' : '0%'}"
+			></div>
 		</div>
-		
+
 		<!-- Step 2: Review -->
 		<div class="flex items-center gap-2">
-			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'review' ? 'bg-[#3f231c] text-white shadow-sm' : importStep === 'processing' || importStep === 'done' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+			<div
+				class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep ===
+				'review'
+					? 'bg-[#3f231c] text-white shadow-sm'
+					: importStep === 'processing' || importStep === 'done'
+						? 'bg-green-100 text-green-700'
+						: 'bg-slate-100 text-slate-500'}"
+			>
 				{#if importStep === 'processing' || importStep === 'done'}
 					<iconify-icon icon="solar:check-circle-bold" class="text-base"></iconify-icon>
 				{:else}
 					2
 				{/if}
 			</div>
-			<span class="text-xs font-bold transition-all duration-200 {importStep === 'review' ? 'text-slate-800' : 'text-slate-400'}">Review</span>
+			<span
+				class="text-xs font-bold transition-all duration-200 {importStep === 'review'
+					? 'text-slate-800'
+					: 'text-slate-400'}">Review</span
+			>
 		</div>
-		
+
 		<!-- Line 2 -->
 		<div class="flex-grow h-[2px] mx-3 bg-slate-100">
-			<div class="h-full bg-[#3f231c] transition-all duration-300" style="width: {importStep === 'processing' || importStep === 'done' ? '100%' : '0%'}"></div>
+			<div
+				class="h-full bg-[#3f231c] transition-all duration-300"
+				style="width: {importStep === 'processing' || importStep === 'done' ? '100%' : '0%'}"
+			></div>
 		</div>
-		
+
 		<!-- Step 3: Proses -->
 		<div class="flex items-center gap-2">
-			<div class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep === 'processing' || importStep === 'done' ? 'bg-[#3f231c] text-white shadow-sm' : 'bg-slate-100 text-slate-500'}">
+			<div
+				class="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 {importStep ===
+					'processing' || importStep === 'done'
+					? 'bg-[#3f231c] text-white shadow-sm'
+					: 'bg-slate-100 text-slate-500'}"
+			>
 				3
 			</div>
-			<span class="text-xs font-bold transition-all duration-200 {importStep === 'processing' || importStep === 'done' ? 'text-slate-800' : 'text-slate-400'}">Proses</span>
+			<span
+				class="text-xs font-bold transition-all duration-200 {importStep === 'processing' ||
+				importStep === 'done'
+					? 'text-slate-800'
+					: 'text-slate-400'}">Proses</span
+			>
 		</div>
 	</div>
 
 	{#if importStep === 'upload'}
 		<div class="space-y-6">
-			<div class="flex items-center justify-between p-4 bg-amber-50/50 border border-amber-100 rounded-2xl">
+			<div
+				class="flex items-center justify-between p-4 bg-amber-50/50 border border-amber-100 rounded-2xl"
+			>
 				<div class="flex items-center gap-3">
 					<span class="text-2xl">📥</span>
 					<div>
 						<h4 class="text-xs font-bold text-slate-800">Template Impor Data</h4>
-						<p class="text-[10px] text-slate-400 mt-0.5">Gunakan template resmi agar format kolom sesuai.</p>
+						<p class="text-[10px] text-slate-400 mt-0.5">
+							Gunakan template resmi agar format kolom sesuai.
+						</p>
 					</div>
 				</div>
 				<button
@@ -370,7 +417,9 @@
 					onchange={handleFileUpload}
 					class="hidden"
 				/>
-				<div class="h-16 w-16 rounded-full bg-slate-100 group-hover:bg-amber-100 text-slate-400 group-hover:text-amber-600 flex items-center justify-center transition-colors mb-4 shadow-inner">
+				<div
+					class="h-16 w-16 rounded-full bg-slate-100 group-hover:bg-amber-100 text-slate-400 group-hover:text-amber-600 flex items-center justify-center transition-colors mb-4 shadow-inner"
+				>
 					<iconify-icon icon="solar:document-text-outline" class="text-3xl"></iconify-icon>
 				</div>
 				<p class="text-sm font-bold text-slate-700">Pilih file CSV template</p>
@@ -384,21 +433,33 @@
 			<!-- Statistics Bar -->
 			<div class="grid grid-cols-3 gap-4">
 				<div class="p-3 bg-slate-50 border border-slate-100 rounded-xl text-center">
-					<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Baris</span>
+					<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block"
+						>Total Baris</span
+					>
 					<span class="text-xl font-black text-slate-800 mt-0.5 block">{parsedUsers.length}</span>
 				</div>
 				<div class="p-3 bg-green-50/50 border border-green-100 rounded-xl text-center">
-					<span class="text-[10px] font-bold text-green-600 uppercase tracking-wider block">Data Valid</span>
-					<span class="text-xl font-black text-green-700 mt-0.5 block">{parsedUsers.filter(u => u.isValid).length}</span>
+					<span class="text-[10px] font-bold text-green-600 uppercase tracking-wider block"
+						>Data Valid</span
+					>
+					<span class="text-xl font-black text-green-700 mt-0.5 block"
+						>{parsedUsers.filter((u) => u.isValid).length}</span
+					>
 				</div>
 				<div class="p-3 bg-red-50/50 border border-red-100 rounded-xl text-center">
-					<span class="text-[10px] font-bold text-red-600 uppercase tracking-wider block">Tidak Valid</span>
-					<span class="text-xl font-black text-red-700 mt-0.5 block">{parsedUsers.filter(u => !u.isValid).length}</span>
+					<span class="text-[10px] font-bold text-red-600 uppercase tracking-wider block"
+						>Tidak Valid</span
+					>
+					<span class="text-xl font-black text-red-700 mt-0.5 block"
+						>{parsedUsers.filter((u) => !u.isValid).length}</span
+					>
 				</div>
 			</div>
 
 			<!-- Controls Bar (Search, Page Size, View Toggle) -->
-			<div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+			<div
+				class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100"
+			>
 				<!-- Left: Search and Page Size -->
 				<div class="flex items-center gap-3 w-full sm:w-auto flex-grow">
 					<!-- Search -->
@@ -415,10 +476,11 @@
 					</div>
 					<!-- Page Size -->
 					<div class="flex items-center gap-2 flex-shrink-0">
-						<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Baris:</span>
+						<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Baris:</span
+						>
 						<select
 							bind:value={importPageSize}
-							class="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-400 font-medium"
+							class="bg-white w-[60px] border border-slate-200 text-slate-700 text-xs rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-1 focus:ring-amber-400 font-medium"
 						>
 							<option value="5">5</option>
 							<option value="10">10</option>
@@ -430,11 +492,16 @@
 				</div>
 
 				<!-- Right: View Mode Toggle -->
-				<div class="flex items-center gap-1.5 p-0.5 bg-white border border-slate-205 rounded-lg flex-shrink-0">
+				<div
+					class="flex items-center gap-1.5 p-0.5 bg-white border border-slate-205 rounded-lg flex-shrink-0"
+				>
 					<button
 						type="button"
 						onclick={() => (importViewMode = 'table')}
-						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode === 'table' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode ===
+						'table'
+							? 'bg-[#3f231c] text-white shadow-xs'
+							: 'text-slate-400 hover:text-slate-600'}"
 						title="Tabel"
 					>
 						<iconify-icon icon="solar:hamburger-menu-outline" class="text-base"></iconify-icon>
@@ -442,7 +509,10 @@
 					<button
 						type="button"
 						onclick={() => (importViewMode = 'card')}
-						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode === 'card' ? 'bg-[#3f231c] text-white shadow-xs' : 'text-slate-400 hover:text-slate-600'}"
+						class="p-1 rounded-md transition-all flex items-center justify-center {importViewMode ===
+						'card'
+							? 'bg-[#3f231c] text-white shadow-xs'
+							: 'text-slate-400 hover:text-slate-600'}"
 						title="Card"
 					>
 						<iconify-icon icon="solar:widget-outline" class="text-base"></iconify-icon>
@@ -452,10 +522,14 @@
 
 			{#if importViewMode === 'table'}
 				<!-- Review Data Table (Horizontally scrollable) -->
-				<div class="border border-slate-100 rounded-2xl overflow-y-auto overflow-x-auto max-h-[300px]">
+				<div
+					class="border border-slate-100 rounded-2xl overflow-y-auto overflow-x-auto max-h-[300px]"
+				>
 					<table class="w-full text-left border-collapse text-xs min-w-[700px]">
 						<thead>
-							<tr class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+							<tr
+								class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider"
+							>
 								<th class="px-4 py-3">Status</th>
 								<th class="px-4 py-3">Nama</th>
 								<th class="px-4 py-3">Username (Email)</th>
@@ -465,14 +539,20 @@
 						</thead>
 						<tbody class="divide-y divide-slate-50">
 							{#each paginatedImportUsers as user}
-								<tr class={user.isValid ? 'hover:bg-slate-50/50' : 'bg-red-50/20 hover:bg-red-50/40'}>
+								<tr
+									class={user.isValid ? 'hover:bg-slate-50/50' : 'bg-red-50/20 hover:bg-red-50/40'}
+								>
 									<td class="px-4 py-3 font-semibold">
 										{#if user.isValid}
-											<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200">
+											<span
+												class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200"
+											>
 												VALID
 											</span>
 										{:else}
-											<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200">
+											<span
+												class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200"
+											>
 												ERROR
 											</span>
 										{/if}
@@ -498,13 +578,23 @@
 				<!-- Review Data Card Grid -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-1">
 					{#each paginatedImportUsers as user}
-						<div class="p-4 border rounded-2xl flex flex-col justify-between {user.isValid ? 'border-slate-200 bg-slate-50/10' : 'border-red-200 bg-red-50/10'}">
+						<div
+							class="p-4 border rounded-2xl flex flex-col justify-between {user.isValid
+								? 'border-slate-200 bg-slate-50/10'
+								: 'border-red-200 bg-red-50/10'}"
+						>
 							<div class="flex items-center justify-between mb-3">
 								<span class="font-bold text-slate-800 text-xs">{user.name || '-'}</span>
 								{#if user.isValid}
-									<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200">VALID</span>
+									<span
+										class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-50 text-green-600 border border-green-200"
+										>VALID</span
+									>
 								{:else}
-									<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200">ERROR</span>
+									<span
+										class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-600 border border-red-200"
+										>ERROR</span
+									>
 								{/if}
 							</div>
 							<div class="space-y-1.5 text-[11px] text-slate-500 mb-3">
@@ -518,7 +608,9 @@
 								</div>
 							</div>
 							{#if !user.isValid}
-								<div class="p-2.5 bg-red-50 border border-red-100 text-red-600 text-[10px] rounded-xl font-semibold leading-relaxed">
+								<div
+									class="p-2.5 bg-red-50 border border-red-100 text-red-600 text-[10px] rounded-xl font-semibold leading-relaxed"
+								>
 									{user.errors.join(', ')}
 								</div>
 							{/if}
@@ -531,7 +623,10 @@
 			{#if importPageSize !== 'All' && totalImportPages > 1}
 				<div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
 					<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-						Menampilkan {(importCurrentPage - 1) * parseInt(importPageSize) + 1} - {Math.min(importCurrentPage * parseInt(importPageSize), filteredImportUsers.length)} dari {filteredImportUsers.length} baris
+						Menampilkan {(importCurrentPage - 1) * parseInt(importPageSize) + 1} - {Math.min(
+							importCurrentPage * parseInt(importPageSize),
+							filteredImportUsers.length
+						)} dari {filteredImportUsers.length} baris
 					</span>
 					<div class="flex items-center gap-1">
 						<button
@@ -546,14 +641,18 @@
 							<button
 								type="button"
 								onclick={() => (importCurrentPage = i + 1)}
-								class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage === i + 1 ? 'bg-[#3f231c] text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}"
+								class="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold transition-all {importCurrentPage ===
+								i + 1
+									? 'bg-[#3f231c] text-white shadow-sm'
+									: 'text-slate-500 hover:bg-slate-50'}"
 							>
 								{i + 1}
 							</button>
 						{/each}
 						<button
 							type="button"
-							onclick={() => (importCurrentPage = Math.min(totalImportPages, importCurrentPage + 1))}
+							onclick={() =>
+								(importCurrentPage = Math.min(totalImportPages, importCurrentPage + 1))}
 							disabled={importCurrentPage === totalImportPages}
 							class="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 text-xs rounded-lg transition-colors font-semibold"
 						>
@@ -569,14 +668,7 @@
 			<div class="relative flex items-center justify-center h-36 w-36 mx-auto mb-6">
 				<svg class="w-full h-full transform -rotate-90">
 					<!-- Background Track -->
-					<circle
-						cx="72"
-						cy="72"
-						r="60"
-						stroke-width="6"
-						stroke="#f1f5f9"
-						fill="transparent"
-					/>
+					<circle cx="72" cy="72" r="60" stroke-width="6" stroke="#f1f5f9" fill="transparent" />
 					<!-- Green Active Segment -->
 					<circle
 						cx="72"
@@ -593,24 +685,31 @@
 				</svg>
 				<div class="absolute flex flex-col items-center justify-center">
 					<span class="text-2xl font-black text-slate-800">{importProgress}%</span>
-					<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Proses</span>
+					<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5"
+						>Proses</span
+					>
 				</div>
 			</div>
 
 			<h4 class="text-sm font-bold text-slate-800">Memasukkan Data Ke Database...</h4>
 			<p class="text-xs text-slate-400 mt-1 text-center max-w-xs">
-				Sedang mendaftarkan akun user valid secara bertahap. Harap tidak menutup jendela modal atau merefresh browser.
+				Sedang mendaftarkan akun user valid secara bertahap. Harap tidak menutup jendela modal atau
+				merefresh browser.
 			</p>
 		</div>
 	{:else if importStep === 'done'}
 		<div class="py-8 flex flex-col items-center justify-center text-center">
-			<div class="h-16 w-16 rounded-full bg-green-50 border border-green-200 text-green-500 flex items-center justify-center mb-4 shadow-sm">
+			<div
+				class="h-16 w-16 rounded-full bg-green-50 border border-green-200 text-green-500 flex items-center justify-center mb-4 shadow-sm"
+			>
 				<iconify-icon icon="solar:check-circle-bold" class="text-3xl"></iconify-icon>
 			</div>
 
 			<h4 class="text-sm font-bold text-slate-800">Proses Impor Selesai!</h4>
-			
-			<div class="my-6 p-4 bg-slate-50 border border-slate-100 rounded-2xl inline-block text-left text-xs space-y-2">
+
+			<div
+				class="my-6 p-4 bg-slate-50 border border-slate-100 rounded-2xl inline-block text-left text-xs space-y-2"
+			>
 				<p class="text-slate-600">Hasil ringkasan operasi impor data:</p>
 				<div class="flex gap-6 pt-1 font-bold">
 					<span class="text-green-600 flex items-center gap-1">
