@@ -104,6 +104,12 @@
 		const passwordIndex = headers.findIndex(h => h.includes('password') || h.includes('sandi'));
 		
 		const parsedList = [];
+		const seenUsernames = new Set<string>();
+		const seenEmails = new Set<string>();
+
+		const existingUsernames = new Set((data.users || []).map((u: any) => (u.username || '').toLowerCase().trim()));
+		const existingEmails = new Set((data.users || []).map((u: any) => (u.email || '').toLowerCase().trim()));
+
 		for (let i = 1; i < lines.length; i++) {
 			const row = lines[i];
 			if (row.length < 2) continue;
@@ -117,16 +123,35 @@
 			if (!name) errors.push('Nama wajib diisi');
 			
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			
 			if (!username) {
 				errors.push('Username wajib diisi');
-			} else if (!emailRegex.test(username)) {
-				errors.push('Username harus berformat email valid');
+			} else {
+				const usernameLower = username.toLowerCase();
+				if (!emailRegex.test(username)) {
+					errors.push('Username harus berformat email valid');
+				} else if (existingUsernames.has(usernameLower)) {
+					errors.push('Username sudah terdaftar');
+				} else if (seenUsernames.has(usernameLower)) {
+					errors.push('Username kembar dalam file');
+				} else {
+					seenUsernames.add(usernameLower);
+				}
 			}
 			
 			if (!email) {
 				errors.push('Email wajib diisi');
-			} else if (!emailRegex.test(email)) {
-				errors.push('Format email tidak valid');
+			} else {
+				const emailLower = email.toLowerCase();
+				if (!emailRegex.test(email)) {
+					errors.push('Format email tidak valid');
+				} else if (existingEmails.has(emailLower)) {
+					errors.push('Email sudah terdaftar');
+				} else if (seenEmails.has(emailLower)) {
+					errors.push('Email kembar dalam file');
+				} else {
+					seenEmails.add(emailLower);
+				}
 			}
 			
 			if (!password) {
