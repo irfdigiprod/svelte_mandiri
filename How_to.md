@@ -991,6 +991,7 @@ bun run check
 
 ---
 
+<a id="8-komponen-datatable-reusable"></a>
 ## 8. Komponen DataTable (Reusable)
 
 Komponen **`DataTable`** digunakan untuk menampilkan daftar data dalam bentuk tabel maupun grid kartu secara dinamis, lengkap dengan pencarian, pemilahan baris per halaman, pagination, filter kustom, serta aksi massal (bulk actions).
@@ -1150,6 +1151,7 @@ Berikut adalah contoh lengkap cara membuat halaman admin data **Produk** menggun
 
 ---
 
+<a id="9-komponen-importexcelmodal-reusable"></a>
 ## 9. Komponen ImportExcelModal (Reusable)
 
 Komponen **`ImportExcelModal`** adalah modal berfitur lengkap untuk melakukan proses impor data massal dari file Excel (format `.csv`). Komponen ini dirancang secara elegan untuk meminimalkan beban di database dengan melakukan validasi awal secara penuh di sisi klien.
